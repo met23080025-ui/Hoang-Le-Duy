@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEase - Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="logo">🛍️ ShopEase</a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="products.html" class="nav-link">Products</a>
+      </nav>
+
+      <div class="navbar-actions">
+        <a href="cart.html" class="cart-icon-wrapper" aria-label="Cart">
+          <svg class="cart-icon" viewBox="0 0 24 24">
+            <path d="M7 4h-2l-1 2v2h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2h-11.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1h-14.19l-.94-2z"/>
+          </svg>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="login.html" class="nav-link login-link">Login</a>
+        <a href="register.html" class="btn-register">Register</a>
+      </div>
+
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle menu">☰</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Tech You'll Love, Prices You'll Trust</h1>
+    <p>Laptops, smartphones, headphones and more — all in one place.</p>
+    <a href="products.html" class="btn-cta">Shop Now</a>
+  </section>
+
+  <div class="page-heading">
+    <h2>Featured Products</h2>
+  </div>
+  <div class="products-grid" id="featuredGrid"></div>
+
+  <footer class="footer">
+    &copy; 2026 ShopEase. All rights reserved.
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    renderProductGrid("featuredGrid", getAllProducts().slice(0, 8));
+  </script>
+</body>
+</html>

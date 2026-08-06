@@ -1,0 +1,26 @@
+QUESTION 3 - INSPECTION OF THE MED-AI PROJECT BOARD
+
+Strengths of the Med-AI Project Board
+
+1. Attractive and professional interface. The layout is clean and the colour scheme is well balanced, giving the impression of a finished product rather than a rough prototype.
+
+2. Comes with all the utilities a project needs. It covers almost everything a team requires: an overview, a task board, a progress chart, member management, meeting scheduling and settings.
+
+3. Easy to use without any instructions. Functions are placed where users expect to find them, so it is obvious what to click without having to learn the tool first.
+
+4. Information is presented visually and is easy to grasp. Figures, colours and charts make it possible to understand the state of the project at a single glance.
+
+5. Includes AI support. This is a modern touch that sets it apart from conventional project management tools.
+
+6. Fully localised in Vietnamese. This suits domestic users and lowers the language barrier for team members.
+
+7. Quick to access with nothing to install. Simply opening the link in a browser is enough to start using it, which makes sharing with the whole team very convenient.
+
+8. Lightweight and stable. Pages load quickly and moving between sections feels smooth, with no sense of waiting.
+
+9. Well suited to small teams and academic projects. It is not as heavy or complex as professional tools, yet offers just enough for real needs.
+
+10. Highly customisable. Because it is developed in-house, features can be adjusted or added to match specific requirements.
+
+Weakness of the Med-AI Project Board: The website has font rendering issues, and some features such as notifications are not functional.
+

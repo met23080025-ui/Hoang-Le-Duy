@@ -1,0 +1,81 @@
+
+BÁO CÁO KIỂM THỬ HỆ THỐNG: MEDAIVN.COM
+Ngày thực hiện: 28-7-2026
+Người thực hiện: Hoang Le Duy - 23080025
+
+
+1. MỤC TIÊU KIỂM THỬ
+Mục tiêu của bài kiểm thử này là đánh giá chất lượng và tính ổn định của
+website medaivn.com thông qua kiểm thử thủ công (manual testing). Cụ thể:
+
+  - Xác minh các chức năng chính của website hoạt động đúng và ổn định
+  - Phát hiện các lỗi giao diện, lỗi chức năng, hoặc trải nghiệm người dùng
+    chưa tốt
+  - Kiểm tra tính tương thích trên trình duyệt đang sử dụng
+  - Ghi nhận và báo cáo các vấn đề phát sinh trong quá trình kiểm thử thực tế
+
+2. PHẠM VI KIỂM THỬ
+Các trang và tính năng được lên kế hoạch kiểm thử:
+
+  2.1. Trang chủ (Homepage)
+       - Hiển thị đúng nội dung, hình ảnh, banner
+       - Các liên kết (links) trên trang chủ hoạt động đúng
+       - Giao diện hiển thị đúng trên trình duyệt đang dùng
+
+  2.2. Menu điều hướng (Navigation Menu)
+       - Các mục menu hiển thị đầy đủ
+       - Chuyển trang đúng khi click vào từng mục
+       - Menu responsive (nếu có phiên bản mobile)
+
+  2.3. Chức năng tìm kiếm (Search)
+       - Tìm kiếm với từ khóa hợp lệ trả về kết quả đúng 
+       - Tìm kiếm với từ khóa không tồn tại hiển thị thông báo phù hợp
+       - Ô tìm kiếm không bị lỗi khi để trống
+
+  2.4. Form liên hệ (Contact Form) — nếu có
+       - Hiển thị đầy đủ các trường nhập liệu
+       - Validation các trường bắt buộc (tên, email, nội dung)
+       - Gửi form thành công hiển thị thông báo xác nhận
+       - Gửi form với dữ liệu không hợp lệ (email sai định dạng, bỏ trống...)
+
+  2.5. Chức năng đăng nhập (Login) — nếu có
+       - Đăng nhập với tài khoản hợp lệ
+       - Đăng nhập với tài khoản/mật khẩu sai
+       - Bỏ trống các trường bắt buộc
+
+  2.6. Các trang nội dung khác
+       - Trang Giới thiệu / About
+       - Trang Dịch vụ / Services
+       - Các trang con liên quan
+
+  Ngoài phạm vi kiểm thử (Out of Scope):
+  - Kiểm thử hiệu năng / load testing
+  - Kiểm thử bảo mật chuyên sâu
+  - Kiểm thử trên thiết bị di động thực tế
+
+
+3. CÁC BƯỚC THỰC HIỆN
+
+    Bước 1: Mở trình duyệt và truy cập vào địa chỉ https://medaivn.com
+    Bước 2: Quan sát trang chủ — kiểm tra hiển thị banner, menu, nội dung
+    Bước 3: Click vào từng mục trên menu điều hướng, ghi nhận kết quả
+    Bước 4: Thử chức năng tìm kiếm với từ khóa "tôi bị đau lưng mỏi gối tê tay", "có dược liệu nào rẻ tráng dương không"
+    Bước 5: Truy cập trang liên hệ, thử điền và gửi form
+  
+
+4. KẾT QUẢ KIỂM THỬ
+Phát hiện lỗi: - không hiển thị đủ lịch sử trò chuyện với AI ( đã thể hiện trong mục pics )
+               - Lỗi không tra cứu được ( ảnh Lỗi không tra cứu được)
+5. KẾT LUẬN
+  Hướng dẫn điền vào mục này:
+  Sau khi hoàn thành kiểm thử thực tế, điền tóm tắt:
+
+    - Tổng số test case đã thực hiện: 3
+    - Số test case Pass: 1
+    - Số test case Fail: 2
+    - Tổng số bug phát hiện: 0
+    - Đánh giá chung về chất lượng website medaivn.com: TỐT
+    - Đề xuất / khuyến nghị (nếu có): Không có
+  
+
+

@@ -1,0 +1,97 @@
+AI-Assisted Development Workflow for E-commerce Website
+
+Step 1: Requirement Analysis
+- Ask AI to analyze the project requirements.
+- Define functional requirements.
+- Define non-functional requirements.
+- Identify user roles (Customer, Admin).
+- Create user stories.
+- Define project scope.
+
+Step 2: Project Planning
+- Ask AI to design the project architecture.
+- Create the folder structure.
+- Plan the development roadmap.
+- Decide the technology stack.
+- Plan database tables.
+- Plan REST API endpoints.
+
+Step 3: System Design
+- Ask AI to design the database.
+- Create ER Diagram.
+- Design UI pages.
+- Design navigation flow.
+- Design application architecture.
+
+Step 4: Project Initialization
+- Create the project folders.
+- Initialize the backend with Node.js and Express.
+- Install required npm packages.
+- Create package.json.
+- Configure MySQL connection.
+- Create README.md and .env.
+
+Step 5: Frontend Development
+- Generate Home page.
+- Generate Product page.
+- Generate Product Detail page.
+- Generate Login page.
+- Generate Register page.
+- Generate Shopping Cart page.
+- Generate Checkout page.
+- Generate Admin Dashboard.
+- Improve responsive design.
+
+Step 6: Backend Development
+- Create Express server.
+- Create Models.
+- Create Controllers.
+- Create Routes.
+- Create Middleware.
+- Implement CRUD APIs.
+- Implement Authentication.
+- Handle errors.
+
+Step 7: Fake Data Generation
+- Ask AI to generate fake products.
+- Create fake categories.
+- Generate placeholder images.
+- Display fake products on the website.
+
+Step 8: Frontend & Backend Integration
+- Connect frontend with backend APIs.
+- Fetch product data.
+- Implement Add to Cart.
+- Implement Login/Register.
+- Implement Checkout process.
+
+Step 9: Testing & Debugging
+- Test every page.
+- Test API endpoints.
+- Fix UI issues.
+- Fix responsive layout.
+- Fix JavaScript errors.
+- Validate forms.
+
+Step 10: Code Review
+- Ask AI to review the code.
+- Improve code readability.
+- Optimize performance.
+- Remove duplicate code.
+- Improve security.
+
+Step 11: Documentation
+- Generate Requirement Analysis.
+- Generate Planning document.
+- Generate Design document.
+- Generate Testing document.
+- Record AI prompts used.
+- Explain AI-generated code.
+- Document manual modifications.
+
+Step 12: Final Review
+- Review the whole project.
+- Prepare screenshots.
+- Verify all functions.
+- Prepare presentation.
+- Submit the final project.

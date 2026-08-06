@@ -1,0 +1,619 @@
+QUESTION 2 - SAMPLE PROJECT PLAN: FOODFAST, BUILT ON GITHUB PROJECTS
+
+1. TOOL SURVEY AND CHOICE
+
+Pricing below was looked up on each vendor's official pricing page on
+2026-07-30. Where a figure could not be confirmed directly against the
+official page in this session, it is marked "needs verification"
+rather than guessed.
+
+  Tool       Free tier                  Paid pricing (per user/month)
+  ---------  -------------------------  -------------------------------
+  Jira        Free for up to 10 users    Standard and Premium tiers
+              [atlassian.com]             exist; Standard/Premium exact
+                                           rates could not be confirmed
+                                           directly on atlassian.com in
+                                           this session (page returned
+                                           truncated content) - needs
+                                           verification. Third-party
+                                           trackers report Standard
+                                           around $7.91 and Premium
+                                           around $14.54, annual
+                                           billing - needs verification.
+                                           Enterprise: custom pricing.
+  GitHub      Free plan: $0, unlimited   Team: $4 (first 12 months).
+  Projects    public/private repos,       Enterprise: $21 (first 12
+              Projects included free      months). Projects itself
+              [github.com/pricing]        adds no extra fee on any plan.
+  Trello      $0. Up to 10 boards and     Standard: $5 (annual) / $6
+              10 collaborators per         (monthly). Premium: $10
+              Workspace, unlimited         (annual) / $12.50 (monthly).
+              cards [trello.com/pricing]   Enterprise: $17.50 (annual).
+  Asana       $0 ("Personal"). Free tier  Starter: $10.99 (annual) /
+              capped at up to 2 users      $13.49 (monthly). Advanced:
+              [asana.com/pricing] - this   $24.99 (annual) / $30.49
+              cap looked low for a team    (monthly). Enterprise:
+              plan and is flagged needs    contact sales.
+              verification.
+  ClickUp     $0, "Free Forever", no      Unlimited: $7 (annual
+              seat cap stated              billing). Business: $12
+              [clickup.com/pricing]        (annual billing). Enterprise:
+                                           contact sales.
+  Notion      $0/member/month            Plus: $10/member/month.
+              [notion.com/pricing]         Business: $20/member/month.
+                                           Enterprise: custom. Annual
+                                           billing advertised as "save
+                                           up to 20%" but the exact
+                                           annual figure is not shown on
+                                           the pricing page - needs
+                                           verification.
+
+  Tool       Strengths                  Weaknesses
+  ---------  --------------------------  --------------------------------
+  Jira        Deep native Agile features Steep learning curve; heavy
+              (backlog, sprints, burn-   setup for a 5-person student
+              down/velocity reports)      team; paid pricing above 10
+                                           users needs verification here
+  GitHub      Tight integration with     No native burndown chart, no
+  Projects    code, issues and pull       hard Epic hierarchy, no native
+              requests; flexible custom   story points field, no
+              fields; zero cost at        automatic WIP limit
+              student scale
+  Trello      Simplest UI, fastest to    Weak for requirements and
+              learn, good pure Kanban     reporting; no native sprint or
+                                           backlog concept; free tier
+                                           automation capped at 250
+                                           command runs/month
+  Asana       Strong timeline/Gantt-     Free tier capped at 2 users,
+              like views, good task       too small for a 5-person team;
+              dependencies, polished UI   some views gated behind paid
+                                           tiers
+  ClickUp     Very feature-rich even on  Feature sprawl can overwhelm a
+              the free tier (docs,        first-time team; steeper
+              whiteboards, sprint         learning curve than Trello
+              points, multiple views)
+  Notion      Flexible database views;   Kanban view is a generic
+              can combine documentation   database view, not a
+              and tracking in one place   purpose-built PM board; no
+                                           WIP enforcement, no PR/commit
+                                           integration
+
+Why we chose GitHub Projects:
+
+  1. No seat cap that would block a 5-person team. Trello's Free tier
+     is workable but Asana's 2-user Free cap is not; GitHub Projects is
+     free with no user limit on the Free plan.
+  2. It lives next to the code. FoodFast's source will be hosted on
+     GitHub; a pull request that says "closes #12" moves the card to
+     Done automatically, so the board never drifts far from reality.
+  3. Custom fields (Number, Single-select) are enough to model Story
+     Points, Priority, and Epic without paying for a heavier tool the
+     team does not yet need.
+
+  Known limitation              How we work around it
+  -----------------------------  -------------------------------------
+  No native burndown chart       Track points completed per sprint in
+                                  a shared spreadsheet updated at each
+                                  Sprint Review; plot planned vs actual
+  No hard Epic hierarchy         Use a label EPIC:<name> plus a
+                                  single-select "Epic" field; group or
+                                  filter the board view by that field
+  No built-in story points       Add a custom Number field named
+                                  "Story Points"; sum via a saved,
+                                  grouped view
+  No automatic WIP limit         Agree a per-column cap as a team rule;
+                                  treat exceeding it as a signal to
+                                  finish existing cards before pulling
+                                  new ones
+
+
+2. PROJECT CHARTER
+
+Name: FoodFast - campus food ordering platform.
+
+Background: Small eateries around the university campus take orders
+by phone or in person, which is slow at peak hours and error-prone.
+Students want a faster way to order and pay without walking to a
+crowded counter.
+
+Objectives:
+  - Let a student order food from a nearby campus eatery online and
+    track it until delivery or pickup.
+  - Let a small eatery manage its menu and incoming orders without
+    new hardware.
+  - Demonstrate a full Agile delivery cycle for the HSB2006 course
+    deliverable, from requirements to a working backlog on GitHub
+    Projects.
+
+Success criteria:
+  - A customer can complete the full order flow: browse, add to cart,
+    pay or choose cash on delivery, and track status, end to end.
+  - A restaurant owner can manage a menu and accept or reject an order.
+  - All Must-priority stories in the backlog (Section 7) are Done by
+    the end of Sprint 4, against the Definition of Done in Section 11.
+
+Out of scope: multi-city expansion, native mobile apps, a courier
+payroll system, and loyalty/rewards programs. These may become later
+epics but are not part of this 8-week build.
+
+Constraints: 5 team members, 8 hours per person per week, 8 weeks
+total, zero budget (free-tier hosting and free-tier tools only).
+
+Assumptions: the team has basic web development skills already; a
+free-tier hosting and database provider (for example Vercel plus a
+free-tier Postgres provider) is sufficient for the demo scale; no real
+payment processor is connected, a sandbox/test mode is used instead.
+
+
+3. STAKEHOLDERS
+
+  Stakeholder                 Main concern                Influence
+  ---------------------------  ---------------------------  ----------
+  Course lecturer               Academic rigor, whether       High
+                                the deliverable meets the
+                                grading rubric
+  Student project team (5)      Learnability of the tool,     High
+                                workload fitting 8 hrs/week
+  Campus eatery owners          Easy order/menu management,   Medium
+  (representative user)         no extra hardware needed
+  Student customers             Fast ordering, accurate       Medium
+  (representative user)         delivery estimates
+  Couriers (representative      Clear delivery assignments    Low
+  user, part-time students)
+  University IT/administration  Data privacy and network      Low
+  (if pilot expands beyond      compliance on campus systems
+  the course)
+
+
+4. FUNCTIONAL REQUIREMENTS
+
+  ID      Requirement                          Actor       MoSCoW
+  ------  ------------------------------------  ----------  --------
+  FR-01    Register and log in with email and    Customer    Must
+          password, verified by a one-time
+          code
+  FR-02    Browse the list of participating      Customer    Must
+          restaurants
+  FR-03    Search menu items by keyword and      Customer    Should
+          filter by category
+  FR-04    Add items to a cart and adjust         Customer    Must
+          quantities
+  FR-05    Place an order and choose delivery     Customer    Must
+          or pickup
+  FR-06    Pay by card or choose cash on          Customer    Must
+          delivery at checkout
+  FR-07    Apply a promo code at checkout          Customer    Should
+  FR-08    Track order status in real time         Customer    Must
+  FR-09    Create, edit, or remove menu items      Restaurant  Must
+                                                   owner
+  FR-10    Accept or reject an incoming order      Restaurant  Must
+                                                   owner
+  FR-11    View assigned deliveries and update     Courier     Must
+          delivery status
+  FR-12    View platform-wide order and revenue    Admin       Should
+          reports
+  FR-13    Suspend or approve a restaurant         Admin       Could
+          account
+
+
+5. NON-FUNCTIONAL REQUIREMENTS
+
+Every NFR below carries a measurable number so it can be tested, not
+just asserted.
+
+  ID       Requirement
+  -------  ---------------------------------------------------------
+  NFR-01    Homepage largest contentful paint under 2.5 seconds on a
+           simulated 4G connection.
+  NFR-02    Search API responds with p95 latency under 500 ms at 200
+           concurrent users.
+  NFR-03    The system supports 500 concurrent users with response
+           time degrading by no more than 10 percent versus baseline.
+  NFR-04    Monthly uptime of at least 99.5 percent for the ordering
+           flow.
+  NFR-05    Passwords are hashed with bcrypt at a cost factor of 12
+           or higher; no password is ever stored in plaintext.
+  NFR-06    Automated test coverage of at least 70 percent for
+           backend business logic (order, payment, and auth modules).
+  NFR-07    An order status change (accepted, out for delivery,
+           delivered) reaches the customer's screen within 5 seconds.
+  NFR-08    The layout renders without horizontal scrolling at
+           viewport widths down to 360 px.
+  NFR-09    Payment transactions are logged and reconciled monthly
+           with a discrepancy rate under 0.1 percent.
+
+
+6. EPIC BREAKDOWN
+
+  Epic                              Covers
+  ---------------------------------  ------------------------------
+  E1 Account and authentication       FR-01
+  E2 Discovery and search             FR-02, FR-03
+  E3 Cart and ordering                FR-04, FR-05
+  E4 Payment and promotions           FR-06, FR-07
+  E5 Order tracking and delivery      FR-08, FR-11
+  E6 Restaurant portal                FR-09, FR-10
+  E7 Administration and reporting     FR-12, FR-13
+
+
+7. PRODUCT BACKLOG (18 STORIES)
+
+US-01 | Epic: E1 | Points: 5 | Priority: Must | Sprint: 1
+  As a customer, I want to register with my email and a password,
+  verified by a one-time code, so that I have a secure personal
+  account to order from.
+
+US-02 | Epic: E1 | Points: 3 | Priority: Must | Sprint: 1
+  As a customer, I want to log in and log out, so that my account
+  and order history stay private on shared devices.
+
+US-03 | Epic: E1 | Points: 3 | Priority: Must | Sprint: 1
+  As a restaurant owner, I want to log in to a separate owner
+  account, so that I can manage my restaurant without seeing other
+  restaurants' data.
+
+US-04 | Epic: E2 | Points: 3 | Priority: Must | Sprint: 1
+  As a customer, I want to browse a list of restaurants near
+  campus, so that I can decide where to order from.
+
+US-05 | Epic: E2 | Points: 3 | Priority: Must | Sprint: 1
+  As a customer, I want to view a restaurant's full menu, so that I
+  can decide what to order.
+
+US-06 | Epic: E2 | Points: 5 | Priority: Should | Sprint: 2
+  As a customer, I want to search menu items by keyword, so that I
+  can find a specific dish quickly.
+
+US-07 | Epic: E2 | Points: 3 | Priority: Should | Sprint: 2
+  As a customer, I want to filter menu items by category, so that I
+  can narrow down options without scrolling the whole menu.
+
+US-08 | Epic: E3 | Points: 3 | Priority: Must | Sprint: 2
+  As a customer, I want to add an item to my cart, so that I can
+  collect everything I want before checking out.
+
+US-09 | Epic: E3 | Points: 2 | Priority: Must | Sprint: 2
+  As a customer, I want to adjust quantities or remove an item from
+  my cart, so that I can fix mistakes before ordering.
+
+US-10 | Epic: E3 | Points: 5 | Priority: Must | Sprint: 2
+  As a customer, I want to place an order and choose delivery or
+  pickup, so that I get my food the way that suits me.
+
+US-11 | Epic: E4 | Points: 8 | Priority: Must | Sprint: 3
+  As a customer, I want to pay by card at checkout, so that I do
+  not need cash on hand.
+
+US-12 | Epic: E4 | Points: 3 | Priority: Must | Sprint: 3
+  As a customer, I want to choose cash on delivery, so that I can
+  order without a card.
+
+US-13 | Epic: E4 | Points: 5 | Priority: Should | Sprint: 3
+  As a customer, I want to apply a promo code at checkout, so that
+  I get a discount on eligible orders.
+
+US-14 | Epic: E5 | Points: 8 | Priority: Must | Sprint: 3
+  As a customer, I want to track my order status in real time, so
+  that I know when to expect my food.
+
+US-15 | Epic: E5 | Points: 5 | Priority: Must | Sprint: 4
+  As a courier, I want to view my assigned deliveries and update
+  their status, so that customers and the restaurant see accurate
+  progress.
+
+US-16 | Epic: E6 | Points: 5 | Priority: Must | Sprint: 4
+  As a restaurant owner, I want to accept or reject an incoming
+  order, so that I only commit to orders I can fulfil.
+
+US-17 | Epic: E7 | Points: 5 | Priority: Should | Sprint: 4
+  As an admin, I want to view platform-wide order and revenue
+  reports, so that I can see how the pilot is performing.
+
+US-18 | Epic: E7 | Points: 3 | Priority: Could | Sprint: 4
+  As an admin, I want to suspend or approve a restaurant account, so
+  that I can control who sells on the platform.
+
+Story point total: 5+3+3+3+3+5+3+3+2+5+8+3+5+8+5+5+5+3 = 77.
+Sum check: Sprint 1 = 17, Sprint 2 = 18, Sprint 3 = 24, Sprint 4 = 18.
+17 + 18 + 24 + 18 = 77. This matches the story-by-story total above.
+
+
+8. DETAILED SPECIFICATION - THREE KEY STORIES
+
+US-01: Customer registration with email OTP verification
+
+  AC1 (happy path)
+  Given a new customer on the registration screen
+  When they submit a valid email and password and then enter the
+  correct one-time code sent to that email
+  Then the account is created and they are logged in
+
+  AC2 (repeated wrong OTP entries)
+  Given a customer has requested a one-time code
+  When they enter an incorrect code 5 times in a row
+  Then the code is invalidated and they must request a new one after
+  a 5-minute cooldown
+
+  AC3 (expired code)
+  Given a one-time code was issued more than 10 minutes ago
+  When the customer submits that code
+  Then the system rejects it as expired and offers to resend a new
+  code
+
+  AC4 (duplicate account)
+  Given an email address is already registered
+  When someone tries to register again with that same email
+  Then the system rejects the registration and suggests logging in
+  or resetting the password instead
+
+  AC5 (network loss mid-registration)
+  Given a customer has submitted the registration form
+  When the network connection drops before a server response is
+  received
+  Then the client shows a retry option and does not create a
+  duplicate account if the original request actually succeeded
+  server-side
+
+US-10: Place an order choosing delivery or pickup
+
+  AC1 (happy path)
+  Given a customer has at least one item in their cart
+  When they choose delivery, confirm an address, and submit the
+  order
+  Then an order is created with status "placed" and the restaurant
+  is notified
+
+  AC2 (network loss mid-order)
+  Given a customer has pressed "place order"
+  When the network connection drops before the client receives a
+  confirmation
+  Then the order is not created twice; on reconnect the client
+  checks order status by a unique request ID before allowing another
+  submit attempt
+
+  AC3 (restaurant unavailable)
+  Given a restaurant has marked itself closed
+  When a customer tries to submit an order to that restaurant
+  Then the order is blocked and the customer is told the restaurant
+  is currently closed
+
+  AC4 (empty cart)
+  Given a customer's cart has zero items
+  When they navigate to checkout
+  Then the checkout screen is not shown and the customer is
+  redirected back to the menu with a message
+
+  AC5 (missing delivery address)
+  Given a customer has chosen delivery
+  When they have not provided a delivery address
+  Then the order cannot be submitted until an address is entered
+
+US-11: Pay by card at checkout
+
+  AC1 (happy path)
+  Given a customer has a valid order ready for payment
+  When they submit valid card details
+  Then the payment is authorised and the order proceeds to "paid"
+  status
+
+  AC2 (card declined)
+  Given a customer submits card details
+  When the payment gateway declines the charge
+  Then the order stays unpaid, the customer sees the decline reason,
+  and can retry with a different card
+
+  AC3 (network loss mid-payment)
+  Given a payment request has been sent to the gateway
+  When the network connection drops before the client receives the
+  result
+  Then the system checks the gateway's authoritative transaction
+  status before showing success or failure, so the customer is never
+  charged twice for one order
+
+  AC4 (session/payment timeout)
+  Given a customer has started the payment form
+  When more than 10 minutes pass without submission
+  Then the session expires and the customer must re-enter payment
+  details
+
+  AC5 (retry after failure)
+  Given a payment attempt has just failed
+  When the customer corrects their card details and resubmits
+  Then a new payment attempt is made without creating a second order
+
+
+9. SPRINT PLAN
+
+Constraint check: 5 people at 8 hours/week for 8 weeks is the budget.
+Sprint 0 below adds 3-4 extra working days before Sprint 1 starts, so
+the realistic total is closer to 8.5 weeks. This is flagged here
+rather than hidden; see risk R2 in Section 13.
+
+Sprint 0 (3-4 days, before Week 1) - infrastructure, no story points
+  Goal: the team can build, review, and deploy before any user story
+  starts.
+  Items: create the GitHub repository and GitHub Projects board;
+  add the Story Points and Priority custom fields; agree the tech
+  stack; set up a CI pipeline that runs tests on every pull request;
+  set up a free-tier deployment target; write the Definition of Done.
+
+Sprint 1 (Weeks 1-2)
+  Goal: a customer and a restaurant owner can create an account, log
+  in, and a customer can browse restaurants and menus.
+  Stories: US-01, US-02, US-03, US-04, US-05.
+  Points: 5+3+3+3+3 = 17 (target band 20-22; under budget on purpose,
+  to absorb any Sprint 0 setup work that spills into Week 1).
+
+Sprint 2 (Weeks 3-4)
+  Goal: a customer can search and filter the menu, build a cart, and
+  place a basic order.
+  Stories: US-06, US-07, US-08, US-09, US-10.
+  Points: 5+3+3+2+5 = 18 (under the 20-22 band, buffer for
+  integration issues carried from Sprint 1).
+
+Sprint 3 (Weeks 5-6)
+  Goal: a customer can pay and see real-time order status.
+  Stories: US-11, US-12, US-13, US-14.
+  Points: 8+3+5+8 = 24. This EXCEEDS the 20-22 velocity band by 2 to
+  4 points. US-11, US-12, and US-14 are all Must, so they stay. The
+  first item to cut, if the team is behind, is US-13 (apply promo
+  code, Should priority, 5 points) - it moves to Sprint 4 or to the
+  post-project backlog.
+
+Sprint 4 (Weeks 7-8)
+  Goal: couriers can manage deliveries, restaurant owners can accept
+  or reject orders, and admin has basic reporting and account
+  control.
+  Stories: US-15, US-16, US-17, US-18.
+  Points: 5+5+5+3 = 18. Contingency: if US-13 was cut from Sprint 3
+  and added here, the sprint becomes 23 points, itself over budget.
+  In that case US-18 (suspend/approve restaurant, Could priority, 3
+  points) is the next item cut, moving to the post-project backlog.
+
+Grand total across the four sprints: 17 + 18 + 24 + 18 = 77 story
+points, matching Section 7.
+
+
+10. KANBAN BOARD DESIGN
+
+  Column         WIP limit   Entry condition
+  -------------  ----------  ---------------------------------------
+  Backlog         none        Any story or task the team has agreed
+                              is worth doing, refined or not.
+  Ready            8          Story has acceptance criteria written,
+                              is estimated in story points, and has
+                              no unresolved dependency.
+  In Progress      3          A developer has free capacity and
+                              pulls the highest-priority Ready item;
+                              a branch has been created for it.
+  Code Review      3          A pull request is open, it builds, and
+                              its automated tests pass locally.
+  Testing          3          The pull request is merged to the
+                              staging branch and deployed to the
+                              staging environment.
+  Done             none        The item has passed QA testing on
+                              staging and meets every item in the
+                              Definition of Done (Section 11).
+
+WIP limits are set to 3 for the three active columns because the team
+has two developer roles (Frontend, Backend) doing the hands-on build
+work; a limit of 3 leaves one slot of slack without allowing the
+column to become a queue.
+
+
+11. DEFINITION OF DONE
+
+A story is Done only when all six of the following hold:
+  1. Code is merged to the main branch via a reviewed pull request.
+  2. Automated tests are written and passing for the new behaviour.
+  3. The story's own acceptance criteria (Section 8 style) all pass.
+  4. The feature is deployed and verified on the staging environment.
+  5. No known critical or high-severity bug is open against it.
+  6. Any new user-facing text has been checked for the target
+     language (English or Vietnamese) it was written for.
+
+
+12. RACI MATRIX
+
+  Activity              PO    SM    Frontend  Backend  QA
+  ---------------------  ----  ----  --------  -------  ----
+  Backlog refinement      A     C      C         C       C
+  Sprint planning         A     R      C         C       C
+  Development              I     I      R         R       I
+  Code review               I     I      R         R       C
+  QA testing                 I     I      C         C      A/R
+  Sprint review/demo          A     R      C         C       C
+  Retrospective                 C    A/R     C         C       C
+
+  R = Responsible, A = Accountable, C = Consulted, I = Informed.
+  PO = Product Owner, SM = Scrum Master.
+
+
+13. RISK MANAGEMENT
+
+  ID    Risk                        Likelihood  Impact  Mitigation
+  ----  --------------------------  ----------  ------  ------------
+  R1     Payment gateway sandbox      Medium      High    Use a mock
+        unavailable or unstable                          payment
+        during development                               service for
+                                                          Sprints 1-2;
+                                                          integrate
+                                                          the real
+                                                          sandbox by
+                                                          Sprint 3
+                                                          with a stub
+                                                          fallback
+  R2     Team member unavailable      High        Medium  Sprints 1-2
+        during exam weeks                                 are
+                                                          deliberately
+                                                          under
+                                                          budget (17,
+                                                          18 points)
+                                                          to absorb
+                                                          this
+  R3     Scope creep from             Medium      Medium  MoSCoW
+        stakeholder requests                              priority is
+                                                          enforced by
+                                                          the PO; new
+                                                          requests go
+                                                          to the
+                                                          backlog, not
+                                                          the active
+                                                          sprint
+  R4     Underestimated story         High        Medium  Re-baseline
+        points causing sprint                              velocity
+        overflow (already seen in                          after
+        Sprint 3)                                         Sprint 1;
+                                                          cut Should
+                                                          and Could
+                                                          items first
+                                                          (Section 9)
+  R5     Free-tier hosting or         Low         Medium  Monitor
+        database limits exceeded                          usage
+                                                          dashboards
+                                                          weekly;
+                                                          design NFRs
+                                                          to fit
+                                                          within
+                                                          free-tier
+                                                          caps
+  R6     Real-time order tracking     Medium      High    Timebox a
+        is technically harder than                        one-day
+        estimated                                         spike in
+                                                          Sprint 2 to
+                                                          validate the
+                                                          approach
+                                                          before
+                                                          committing
+                                                          US-14 in
+                                                          Sprint 3
+
+
+14. HOW TO BUILD THIS ON GITHUB PROJECTS
+
+  1. In the GitHub organisation or personal account, go to Projects
+     and create a new project.
+  2. Choose the Board template so the default view is a Kanban board.
+  3. Rename the default columns to match Section 10: Backlog, Ready,
+     In Progress, Code Review, Testing, Done.
+  4. Add a custom field of type Number named "Story Points".
+  5. Add a custom field of type Single-select named "Priority" with
+     options Must, Should, Could, Won't.
+  6. Add a custom field of type Single-select named "Epic" with one
+     option per epic from Section 6 (E1 to E7), or use labels in the
+     form EPIC:<name> on each issue instead.
+  7. In the repository, create one label per epic, in the form
+     EPIC:account-auth, EPIC:discovery-search, and so on.
+  8. Create one GitHub issue per user story from Section 7. Fill in
+     the Story Points and Priority fields, and attach the matching
+     Epic label.
+  9. Add each new issue to the project board; it lands in Backlog by
+     default.
+  10. During Sprint Planning, drag the sprint's stories into Ready,
+      then into In Progress as developers pick them up, following the
+      WIP limits in Section 10.
+  11. Link each pull request to its issue using "closes #<issue
+      number>" in the PR description, so merging the PR moves the
+      card to Done automatically once it also passes staging testing.
+
+

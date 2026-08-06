@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Công cụ chia nhóm công bằng</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#161d2e; --panel2:#1c2438; --border:#2a3550;
+    --text:#e8ecf5; --muted:#93a0bd; --accent:#5ab0ff; --accent2:#7c5cff;
+    --ok:#2ecf7a; --warn:#ffb648; --bad:#ff5c7c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+  }
+  header{
+    padding:24px 20px 10px; text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  header h1{margin:0 0 6px; font-size:1.5rem}
+  header p{margin:0; color:var(--muted); font-size:.92rem}
+  main{max-width:1200px; margin:0 auto; padding:20px; display:grid; gap:20px}
+  section.card{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:18px 20px;
+  }
+  section.card h2{margin-top:0; font-size:1.05rem; display:flex; align-items:center; gap:8px}
+  textarea{
+    width:100%; min-height:220px; resize:vertical; background:var(--panel2);
+    color:var(--text); border:1px solid var(--border); border-radius:8px;
+    padding:10px; font-family:Consolas,Menlo,monospace; font-size:.85rem;
+  }
+  .row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:10px 0}
+  .row label{font-size:.85rem; color:var(--muted); margin-right:4px}
+  input[type=text], input[type=number]{
+    background:var(--panel2); color:var(--text); border:1px solid var(--border);
+    border-radius:6px; padding:7px 9px; font-size:.85rem;
+  }
+  input[type=number]{width:110px}
+  button{
+    background:var(--accent2); color:#fff; border:none; border-radius:8px;
+    padding:9px 14px; font-size:.85rem; cursor:pointer; font-weight:600;
+  }
+  button.secondary{background:var(--panel2); border:1px solid var(--border); color:var(--text)}
+  button.ghost{background:transparent; border:1px solid var(--border); color:var(--text)}
+  button:hover{filter:brightness(1.12)}
+  button:disabled{opacity:.5; cursor:not-allowed}
+  .checks{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:8px; margin:10px 0}
+  .checks label{
+    display:flex; gap:8px; align-items:flex-start; font-size:.82rem; color:var(--text);
+    background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:8px 10px;
+  }
+  .checks input{margin-top:3px}
+  .metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:10px}
+  .metric{
+    background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:14px;
+  }
+  .metric .label{font-size:.78rem; color:var(--muted)}
+  .metric .value{font-size:1.5rem; font-weight:700; margin:4px 0}
+  .badge{
+    display:inline-block; font-size:.72rem; font-weight:700; padding:2px 9px;
+    border-radius:999px; letter-spacing:.03em;
+  }
+  .badge.pass{background:rgba(46,207,122,.18); color:var(--ok)}
+  .badge.fail{background:rgba(255,92,124,.18); color:var(--bad)}
+  table{width:100%; border-collapse:collapse; font-size:.83rem; margin-top:10px}
+  th,td{border-bottom:1px solid var(--border); padding:7px 8px; text-align:left}
+  th{color:var(--muted); font-weight:600}
+  .verdict{
+    margin-top:12px; padding:12px 14px; border-radius:8px; font-size:.87rem;
+    border:1px solid var(--border);
+  }
+  .verdict.ok{border-color:rgba(46,207,122,.4); background:rgba(46,207,122,.08)}
+  .verdict.bad{border-color:rgba(255,92,124,.4); background:rgba(255,92,124,.08)}
+  .teams-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-top:10px}
+  .team-card{
+    background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px;
+  }
+  .team-card h3{margin:0 0 8px; font-size:.9rem; color:var(--accent)}
+  .team-card ul{margin:0; padding-left:18px; font-size:.82rem}
+  .team-card li{margin-bottom:3px}
+  .muted{color:var(--muted); font-size:.8rem}
+  pre.output{
+    background:var(--panel2); border:1px solid var(--border); border-radius:8px;
+    padding:12px; font-size:.8rem; white-space:pre-wrap; max-height:260px; overflow:auto;
+  }
+  .toolbar{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .warnings{margin-top:10px; font-size:.8rem; color:var(--warn)}
+  .footer-note{text-align:center; color:var(--muted); font-size:.78rem; padding:20px}
+  @media (max-width:640px){
+    header h1{font-size:1.25rem}
+    input[type=number]{width:90px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Công cụ chia nhóm công bằng</h1>
+  <p>Chạy hoàn toàn offline trong trình duyệt — không gửi dữ liệu đi đâu cả. Không dùng localStorage.</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>1. Danh sách lớp</h2>
+    <textarea id="rosterInput" placeholder="Họ tên | Giới tính | Điểm | Kỹ năng | Bạn muốn ghép"></textarea>
+    <div class="toolbar">
+      <button id="btnSample" class="secondary" type="button">Tải dữ liệu mẫu (40 sinh viên)</button>
+      <button id="btnUpload" class="secondary" type="button">Tải CSV lên</button>
+      <input id="fileInput" type="file" accept=".csv,.txt" style="display:none" />
+      <span class="muted" id="rosterCount"></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. Cấu hình chia nhóm</h2>
+    <div class="row">
+      <label><input type="radio" name="splitMode" value="size" checked /> Chia theo sĩ số mỗi nhóm</label>
+      <input id="teamSizeInput" type="number" value="5" min="2" />
+      <label><input type="radio" name="splitMode" value="count" /> Chia theo số lượng nhóm</label>
+      <input id="numTeamsInput" type="number" value="8" min="2" />
+    </div>
+    <div class="row">
+      <label for="seedInput">Seed công khai</label>
+      <input id="seedInput" type="text" value="hsb-2026" />
+      <label for="iterInput">Số vòng lặp tối ưu</label>
+      <input id="iterInput" type="number" value="20000" min="0" step="1000" />
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" id="cGpa" checked /> Cân bằng điểm trung bình (GPA) giữa các nhóm</label>
+      <label><input type="checkbox" id="cGender" checked /> Cân bằng tỉ lệ giới tính thiểu số giữa các nhóm</label>
+      <label><input type="checkbox" id="cSolo" checked /> Tránh nhóm có đúng 1 người thuộc giới tính thiểu số</label>
+      <label><input type="checkbox" id="cSkills" checked /> Đảm bảo mỗi nhóm đủ kỹ năng cốt lõi</label>
+      <label><input type="checkbox" id="cBuddy" checked /> Ưu tiên nguyện vọng ghép đôi (tối đa 1 người/lượt)</label>
+      <label><input type="checkbox" id="cSurname" /> (Tuỳ chọn) Tránh trùng họ tập trung vào một nhóm</label>
+    </div>
+    <div class="toolbar">
+      <button id="btnRun" type="button">Chạy chia nhóm</button>
+    </div>
+    <div class="warnings" id="warningsBox"></div>
+  </section>
+
+  <section class="card" id="resultsSection" style="display:none">
+    <h2>3. Kết quả kiểm định công bằng (audit)</h2>
+    <div class="metrics" id="metricCards"></div>
+    <div class="verdict" id="verdictBox"></div>
+    <div style="overflow-x:auto">
+      <table id="auditTable"></table>
+    </div>
+  </section>
+
+  <section class="card" id="teamsSection" style="display:none">
+    <h2>4. Danh sách các nhóm</h2>
+    <div class="teams-grid" id="teamsGrid"></div>
+    <div class="toolbar">
+      <button id="btnExportCsv" class="secondary" type="button">Xuất CSV</button>
+      <button id="btnCopyText" class="secondary" type="button">Copy dạng văn bản (Zalo/Messenger)</button>
+      <button id="btnCopyReport" class="secondary" type="button">Copy báo cáo công bằng</button>
+      <button id="btnCopyAnnounce" class="ghost" type="button">Copy thông báo cho lớp</button>
+    </div>
+    <pre class="output" id="outputBox" style="display:none"></pre>
+  </section>
+</main>
+
+<div class="footer-note">Toàn bộ xử lý diễn ra cục bộ trên máy bạn. Không có framework, không có CDN, không lưu trạng thái giữa các lần mở lại.</div>
+
+<script>
+/* ---------- RNG ---------- */
+function hashStringToSeed(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return function () {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return h >>> 0;
+  };
+}
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function seededRng(seedStr) {
+  const seedFn = hashStringToSeed(String(seedStr == null ? '' : seedStr));
+  const seed = seedFn();
+  return mulberry32(seed);
+}
+function shuffleArray(arr, rng) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+/* ---------- TEXT HELPERS ---------- */
+function removeDiacritics(str) {
+  return String(str).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+function average(arr) {
+  if (!arr.length) return 0;
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+function variance(arr) {
+  if (!arr.length) return 0;
+  const m = average(arr);
+  return average(arr.map(x => (x - m) * (x - m)));
+}
+
+/* ---------- PARSER ---------- */
+const HEADER_KEYS = ['stt', 'name', 'ten', 'ho ten', 'hoten', 'full name'];
+const SKILL_CANON = [
+  { canon: 'Phân tích', keys: ['phan tich', 'phantich', 'analysis', 'data'] },
+  { canon: 'Viết', keys: ['viet', 'writing', 'content'] },
+  { canon: 'Thuyết trình', keys: ['thuyet trinh', 'thuyettrinh', 'presentation', 'present'] },
+  { canon: 'Thiết kế', keys: ['thiet ke', 'thietke', 'design'] },
+  { canon: 'Điều phối', keys: ['dieu phoi', 'dieuphoi', 'coordination', 'pm', 'quan ly'] },
+];
+
+function detectDelimiter(lines) {
+  const candidates = ['|', '\t', ';', ','];
+  let best = ',', bestScore = -1;
+  const sample = lines.slice(0, 12);
+  for (const d of candidates) {
+    let score = 0;
+    for (const l of sample) {
+      if (l.split(d).length >= 2) score++;
+    }
+    if (score > bestScore) { bestScore = score; best = d; }
+  }
+  return best;
+}
+function splitLine(line, delimiter) {
+  return line.split(delimiter).map(c => c.trim());
+}
+function fieldsFromColumns(cols) {
+  const name = cols[0] || '';
+  const gender = cols[1] || '';
+  const score = cols[2] || '';
+  let skills = '', buddy = '';
+  if (cols.length <= 3) { skills = ''; buddy = ''; }
+  else if (cols.length === 4) { skills = cols[3]; buddy = ''; }
+  else if (cols.length === 5) { skills = cols[3]; buddy = cols[4]; }
+  else {
+    // Nhiều hơn 5 cột: khả năng dấu phẩy trong danh sách kỹ năng trùng với dấu phân tách chính -> gộp lại
+    skills = cols.slice(3, cols.length - 1).join(', ');
+    buddy = cols[cols.length - 1];
+  }
+  return { name, gender, score, skills, buddy };
+}
+function normalizeGender(raw) {
+  if (raw === undefined || raw === null) return '';
+  const s = removeDiacritics(String(raw).trim().toLowerCase());
+  if (s === '') return '';
+  if (['nu', 'f', 'female'].includes(s)) return 'Nữ';
+  if (['nam', 'm', 'male'].includes(s)) return 'Nam';
+  return 'Khác';
+}
+function normalizeSkillLabel(raw) {
+  const norm = removeDiacritics(raw.trim().toLowerCase()).replace(/\s+/g, ' ');
+  for (const group of SKILL_CANON) {
+    if (group.keys.some(k => norm === k || norm.includes(k))) return group.canon;
+  }
+  return raw.trim();
+}
+function normalizeSkillList(raw) {
+  if (!raw) return [];
+  return raw.split(/[,;\/]+/).map(s => s.trim()).filter(Boolean).map(normalizeSkillLabel);
+}
+function isHeaderRow(cols) {
+  const first = removeDiacritics((cols[0] || '').trim().toLowerCase());
+  return HEADER_KEYS.includes(first);
+}
+
+function parseRoster(text) {
+  const rawLines = String(text || '').split(/\r\n|\r|\n/);
+  const nonEmpty = rawLines.filter(l => l.trim() !== '' && !l.trim().startsWith('#'));
+  if (nonEmpty.length === 0) return { students: [], warnings: [], delimiter: ',', scaleFactor: 1 };
+
+  const delimiter = detectDelimiter(nonEmpty);
+  const records = [];
+  for (const line of nonEmpty) {
+    const cols = splitLine(line, delimiter);
+    if (isHeaderRow(cols)) continue;
+    const f = fieldsFromColumns(cols);
+    if (!f.name) continue;
+    records.push(f);
+  }
+
+  const parsedScores = records.map(r => {
+    const s = String(r.score || '').replace(',', '.').trim();
+    const v = parseFloat(s);
+    return isNaN(v) ? null : v;
+  });
+  const knownRaw = parsedScores.filter(v => v != null);
+  const maxRaw = knownRaw.length ? Math.max(...knownRaw) : 0;
+  const scaleFactor = maxRaw > 4.5 ? 0.4 : 1;
+  const convertedScores = parsedScores.map(v => (v == null ? null : v * scaleFactor));
+  const known = convertedScores.filter(v => v != null);
+  const meanScore = known.length ? average(known) : 3.0;
+
+  const warnings = [];
+  const students = records.map((r, i) => {
+    let score = convertedScores[i];
+    let imputed = false;
+    if (score == null) {
+      score = meanScore;
+      imputed = true;
+      warnings.push('Thiếu điểm của "' + r.name + '" — đã gán điểm trung bình lớp (' + meanScore.toFixed(2) + ').');
+    }
+    return {
+      id: i,
+      name: r.name,
+      gender: normalizeGender(r.gender),
+      score: score,
+      imputed: imputed,
+      skills: normalizeSkillList(r.skills),
+      buddyRaw: r.buddy ? r.buddy.trim() : '',
+      buddyId: null,
+    };
+  });
+
+  const nameIndex = new Map();
+  students.forEach(s => {
+    const key = removeDiacritics(s.name.toLowerCase());
+    if (!nameIndex.has(key)) nameIndex.set(key, s.id);
+  });
+  students.forEach(s => {
+    if (s.buddyRaw) {
+      const key = removeDiacritics(s.buddyRaw.toLowerCase());
+      const targetId = nameIndex.get(key);
+      s.buddyId = (targetId !== undefined && targetId !== s.id) ? targetId : null;
+    }
+  });
+
+  return { students, warnings, delimiter, scaleFactor };
+}
+
+/* ---------- DETECTION HELPERS ---------- */
+function detectMinorityGender(students) {
+  const counts = {};
+  students.forEach(s => { if (s.gender) counts[s.gender] = (counts[s.gender] || 0) + 1; });
+  const genders = Object.keys(counts);
+  if (genders.length < 2) return null;
+  genders.sort((a, b) => counts[a] - counts[b]);
+  return genders[0];
+}
+function detectCoreSkills(students, K) {
+  const counts = {};
+  students.forEach(s => s.skills.forEach(sk => { counts[sk] = (counts[sk] || 0) + 1; }));
+  return Object.keys(counts).filter(sk => counts[sk] >= K);
+}
+function resolveNumTeams(n, options) {
+  if (options.numTeams) return Math.max(1, Math.min(n, Math.round(options.numTeams)));
+  if (options.teamSize) return Math.max(1, Math.round(n / options.teamSize));
+  return Math.max(1, Math.round(n / 5));
+}
+function defaultConstraints() {
+  return { gpa: true, genderRatio: true, soloMinority: true, skills: true, buddy: true, surname: false };
+}
+
+/* ---------- STAGE A: STRATIFIED SNAKE DRAFT ---------- */
+function stratifiedSnakeDraft(students, K, rng) {
+  const shuffled = shuffleArray(students, rng);
+  const sorted = shuffled.slice().sort((a, b) => b.score - a.score);
+  const strata = [];
+  for (let i = 0; i < sorted.length; i += K) strata.push(sorted.slice(i, i + K));
+  const teams = Array.from({ length: K }, () => []);
+  strata.forEach((stratum, idx) => {
+    const order = [];
+    for (let k = 0; k < K; k++) order.push(k);
+    if (idx % 2 === 1) order.reverse();
+    stratum.forEach((student, pos) => {
+      teams[order[pos]].push(student);
+    });
+  });
+  return teams;
+}
+
+/* ---------- COST FUNCTION ---------- */
+function computeCost(teams, ctx) {
+  const c = ctx.constraints;
+
+  const gpaMeans = teams.map(t => average(t.map(s => s.score)));
+  const gpaVar = c.gpa ? variance(gpaMeans) : 0;
+
+  let genderVar = 0, soloCount = 0;
+  if (ctx.minorityGender) {
+    const ratios = teams.map(t => (t.length ? t.filter(s => s.gender === ctx.minorityGender).length / t.length : 0));
+    genderVar = c.genderRatio ? variance(ratios) : 0;
+    soloCount = c.soloMinority
+      ? teams.filter(t => t.length > 2 && t.filter(s => s.gender === ctx.minorityGender).length === 1).length
+      : 0;
+  }
+
+  let missingSkillPairs = 0;
+  if (c.skills) {
+    ctx.coreSkills.forEach(skill => {
+      teams.forEach(t => { if (!t.some(s => s.skills.includes(skill))) missingSkillPairs++; });
+    });
+  }
+
+  let unmetBuddies = 0;
+  if (c.buddy) {
+    const teamOf = {};
+    teams.forEach((t, ti) => t.forEach(s => { teamOf[s.id] = ti; }));
+    teams.forEach(t => t.forEach(s => {
+      if (s.buddyId != null && teamOf[s.buddyId] !== teamOf[s.id]) unmetBuddies++;
+    }));
+  }
+
+  let surnameDup = 0;
+  if (c.surname) {
+    teams.forEach(t => {
+      const counts = {};
+      t.forEach(s => {
+        const sur = s.name.trim().split(/\s+/)[0];
+        counts[sur] = (counts[sur] || 0) + 1;
+      });
+      Object.values(counts).forEach(cnt => { if (cnt > 1) surnameDup += (cnt - 1); });
+    });
+  }
+
+  return 100 * gpaVar + 40 * genderVar + 3 * soloCount + 1.5 * missingSkillPairs + 2 * unmetBuddies + 0.5 * surnameDup;
+}
+
+/* ---------- STAGE B: LOCAL SEARCH (HILL CLIMBING) ---------- */
+function hillClimb(teams, ctx, rng, iterations, earlyStopWindow) {
+  let currentCost = computeCost(teams, ctx);
+  let noImprove = 0;
+  let iterationsRun = 0;
+  const K = teams.length;
+  if (K < 2) return { teams, cost: currentCost, iterationsRun: 0 };
+
+  for (let it = 0; it < iterations; it++) {
+    if (noImprove >= earlyStopWindow) break;
+    iterationsRun++;
+
+    const tA = Math.floor(rng() * K);
+    let tB = Math.floor(rng() * K);
+    if (K > 1) { while (tB === tA) tB = Math.floor(rng() * K); }
+    const teamA = teams[tA], teamB = teams[tB];
+    if (!teamA.length || !teamB.length) { noImprove++; continue; }
+
+    const iA = Math.floor(rng() * teamA.length);
+    const iB = Math.floor(rng() * teamB.length);
+    const studentA = teamA[iA], studentB = teamB[iB];
+
+    teamA[iA] = studentB; teamB[iB] = studentA;
+    const newCost = computeCost(teams, ctx);
+
+    if (newCost < currentCost - 1e-9) {
+      currentCost = newCost;
+      noImprove = 0;
+    } else {
+      teamA[iA] = studentA; teamB[iB] = studentB;
+      noImprove++;
+    }
+  }
+  return { teams, cost: currentCost, iterationsRun };
+}
+
+/* ---------- AUDIT ---------- */
+function computeBuddySatisfactionRate(teams) {
+  const teamOf = {};
+  teams.forEach((t, ti) => t.forEach(s => { teamOf[s.id] = ti; }));
+  let total = 0, satisfied = 0;
+  teams.forEach(t => t.forEach(s => {
+    if (s.buddyId != null) {
+      total++;
+      if (teamOf[s.buddyId] === teamOf[s.id]) satisfied++;
+    }
+  }));
+  return total === 0 ? 1 : satisfied / total;
+}
+function auditTeams(teams, ctx) {
+  const teamStats = teams.map(team => {
+    const size = team.length;
+    const meanGpa = average(team.map(s => s.score));
+    const genderCounts = {};
+    team.forEach(s => {
+      const g = s.gender || 'Chưa xác định';
+      genderCounts[g] = (genderCounts[g] || 0) + 1;
+    });
+    const minorityCount = ctx.minorityGender ? team.filter(s => s.gender === ctx.minorityGender).length : 0;
+    const missingSkills = ctx.coreSkills.filter(skill => !team.some(s => s.skills.includes(skill)));
+    return { size, meanGpa, genderCounts, minorityCount, missingSkills };
+  });
+  const gpaValues = teamStats.map(t => t.meanGpa);
+  const gpaGap = teamStats.length ? Math.max(...gpaValues) - Math.min(...gpaValues) : 0;
+  const soloMinorityTeams = ctx.minorityGender
+    ? teamStats.filter(t => t.size > 2 && t.minorityCount === 1).length
+    : 0;
+  const sizeValues = teamStats.map(t => t.size);
+  const sizeGap = teamStats.length ? Math.max(...sizeValues) - Math.min(...sizeValues) : 0;
+  const totalMissingSkillPairs = teamStats.reduce((sum, t) => sum + t.missingSkills.length, 0);
+  const buddySatisfaction = computeBuddySatisfactionRate(teams);
+
+  return {
+    teamStats, gpaGap, soloMinorityTeams, sizeGap, totalMissingSkillPairs, buddySatisfaction,
+    thresholds: {
+      gpaGapPass: gpaGap < 0.3,
+      soloMinorityPass: soloMinorityTeams === 0,
+      skillsPass: totalMissingSkillPairs === 0,
+      sizeGapPass: sizeGap <= 1,
+    },
+  };
+}
+
+/* ---------- MAIN PIPELINE ---------- */
+function splitIntoTeams(rawText, options) {
+  options = options || {};
+  const parsed = parseRoster(rawText);
+  const students = parsed.students;
+  const K = resolveNumTeams(students.length, options);
+  const minorityGender = detectMinorityGender(students);
+  const coreSkills = detectCoreSkills(students, K);
+  const seed = options.seed || 'default-seed';
+  const rng = seededRng(seed);
+
+  let teams = stratifiedSnakeDraft(students, K, rng);
+  const ctx = {
+    minorityGender,
+    coreSkills,
+    constraints: options.constraints || defaultConstraints(),
+  };
+  const draftCost = computeCost(teams, ctx);
+
+  const iterations = options.iterations != null ? options.iterations : 20000;
+  const earlyStop = options.earlyStopWindow != null ? options.earlyStopWindow : 2000;
+  const result = hillClimb(teams, ctx, rng, iterations, earlyStop);
+  teams = result.teams;
+
+  const audit = auditTeams(teams, ctx);
+
+  return {
+    students, teams, K, minorityGender, coreSkills, seed,
+    draftCost, finalCost: result.cost, iterationsRun: result.iterationsRun,
+    audit, warnings: parsed.warnings, delimiter: parsed.delimiter, scaleFactor: parsed.scaleFactor,
+  };
+}
+
+/* ---------- SAMPLE DATA ---------- */
+var SAMPLE_DATA = "Họ tên | Giới tính | Điểm | Kỹ năng | Bạn muốn ghép\n" +
+"Nguyễn Văn An | Nam | 3.2 | Phân tích | \n" +
+"Trần Thị Bích | Nữ | 2.8 | Viết | \n" +
+"Lê Văn Cường | Nam | 3.5 | Thuyết trình | \n" +
+"Phạm Thị Duyên | Nữ | 3.0 | Thiết kế, Phân tích | \n" +
+"Hoàng Văn Đức | Nam | 2.6 | Điều phối | Đỗ Thị Lan\n" +
+"Huỳnh Thị Giang | Nữ | 3.7 | Phân tích | \n" +
+"Phan Văn Hải | Nam | 3.1 | Viết | \n" +
+"Vũ Thị Hoa | Nữ | 2.9 | Thuyết trình, Điều phối | \n" +
+"Võ Văn Hùng | Nam | 3.4 | Thiết kế | \n" +
+"Đặng Thị Huyền | Nữ | 3.6 | Điều phối | \n" +
+"Bùi Văn Khang | Nam | 2.5 | Phân tích | \n" +
+"Đỗ Thị Lan | Nữ | 3.3 | Viết, Thiết kế | Hoàng Văn Đức\n" +
+"Hồ Văn Long | Nam | 3.8 | Thuyết trình | \n" +
+"Ngô Thị Mai | Nữ | 2.7 | Thiết kế | \n" +
+"Dương Văn Nam | Nam | 3.0 | Điều phối | \n" +
+"Lý Thị Ngọc | Nữ | 3.2 | Phân tích, Thuyết trình | \n" +
+"Nguyễn Văn Phúc | Nam | 2.4 | Viết | \n" +
+"Trần Thị Quỳnh | Nữ | 3.9 | Thuyết trình | \n" +
+"Lê Văn Sơn | Nam | 3.1 | Thiết kế | \n" +
+"Phạm Thị Thảo | Nữ | 2.8 | Điều phối, Viết | \n" +
+"Hoàng Văn Tài | Nam | 3.5 | Phân tích | \n" +
+"Huỳnh Thị Thu | Nữ | 3.0 | Viết | \n" +
+"Phan Văn Toàn | Nam | 2.6 | Thuyết trình | \n" +
+"Vũ Thị Trang | Nữ | 3.4 | Thiết kế, Phân tích | \n" +
+"Võ Văn Trung | Nam | 3.7 | Điều phối | \n" +
+"Đặng Thị Tuyết | Nữ | 2.9 | Phân tích | \n" +
+"Bùi Văn Vinh | Nam | 3.2 | Viết | \n" +
+"Đỗ Thị Xuân | Nữ | 3.1 | Thuyết trình, Điều phối | \n" +
+"Hồ Văn Ý | Nam | 2.5 | Thiết kế | \n" +
+"Ngô Thị Kim | Nữ | 3.6 | Điều phối | \n" +
+"Dương Văn Lâm | Nam | 3.3 | Phân tích | \n" +
+"Lý Thị Loan | Nữ | 2.8 | Viết, Thiết kế | \n" +
+"Nguyễn Thị Ánh | Nữ | 3.0 | Thuyết trình | \n" +
+"Trần Văn Bình | Nam | 3.9 | Thiết kế, Phân tích | \n" +
+"Lê Thị Cẩm | Nữ | 2.6 | Điều phối | \n" +
+"Phạm Văn Dũng | Nam | 3.4 | Phân tích, Thuyết trình | \n" +
+"Hoàng Thị Én | Nữ | 3.1 | Viết | \n" +
+"Huỳnh Văn Phát | Nam | 2.7 | Thuyết trình | \n" +
+"Phan Thị Gấm | Nữ | 3.5 | Thiết kế | \n" +
+"Vũ Văn Hòa | Nam | 3.2 | Điều phối, Viết | \n";
+
+/* ---------- UI ---------- */
+(function () {
+  const $ = id => document.getElementById(id);
+  let lastResult = null;
+
+  function currentConstraints() {
+    return {
+      gpa: $('cGpa').checked,
+      genderRatio: $('cGender').checked,
+      soloMinority: $('cSolo').checked,
+      skills: $('cSkills').checked,
+      buddy: $('cBuddy').checked,
+      surname: $('cSurname').checked,
+    };
+  }
+  function currentOptions() {
+    const mode = document.querySelector('input[name=splitMode]:checked').value;
+    const opts = {
+      seed: $('seedInput').value || 'default-seed',
+      iterations: parseInt($('iterInput').value, 10) || 0,
+      constraints: currentConstraints(),
+    };
+    if (mode === 'size') opts.teamSize = parseInt($('teamSizeInput').value, 10) || 5;
+    else opts.numTeams = parseInt($('numTeamsInput').value, 10) || 2;
+    return opts;
+  }
+
+  function badge(pass) {
+    return '<span class="badge ' + (pass ? 'pass' : 'fail') + '">' + (pass ? 'ĐẠT' : 'CẦN XEM LẠI') + '</span>';
+  }
+
+  function renderMetrics(audit) {
+    const items = [
+      { label: 'Chênh lệch GPA giữa nhóm cao nhất và thấp nhất (ngưỡng < 0.3)', value: audit.gpaGap.toFixed(3), pass: audit.thresholds.gpaGapPass },
+      { label: 'Số nhóm có đúng 1 người giới tính thiểu số (ngưỡng = 0)', value: audit.soloMinorityTeams, pass: audit.thresholds.soloMinorityPass },
+      { label: 'Số cặp (nhóm, kỹ năng cốt lõi) còn thiếu (ngưỡng = 0)', value: audit.totalMissingSkillPairs, pass: audit.thresholds.skillsPass },
+      { label: 'Chênh lệch sĩ số giữa các nhóm (ngưỡng ≤ 1)', value: audit.sizeGap, pass: audit.thresholds.sizeGapPass },
+    ];
+    return items.map(it =>
+      '<div class="metric"><div class="label">' + it.label + '</div>' +
+      '<div class="value">' + it.value + '</div>' + badge(it.pass) + '</div>'
+    ).join('');
+  }
+
+  function renderVerdict(audit) {
+    const failed = [];
+    if (!audit.thresholds.gpaGapPass) failed.push('chênh lệch GPA giữa các nhóm vượt ngưỡng 0.3');
+    if (!audit.thresholds.soloMinorityPass) failed.push('còn nhóm có đúng 1 người giới tính thiểu số');
+    if (!audit.thresholds.skillsPass) failed.push('còn nhóm thiếu kỹ năng cốt lõi');
+    if (!audit.thresholds.sizeGapPass) failed.push('sĩ số giữa các nhóm chênh lệch quá 1 người');
+
+    if (failed.length === 0) {
+      return '<div class="verdict ok"><strong>Đạt tất cả tiêu chí.</strong> Có thể công bố kết quả kèm bảng kiểm định này.</div>';
+    }
+    return '<div class="verdict bad"><strong>Chưa đạt:</strong> ' + failed.join('; ') + '.<br/>' +
+      'Gợi ý khắc phục: tăng số vòng lặp tối ưu, đổi seed, đổi số lượng nhóm, hoặc nếu cơ cấu lớp khiến điều này không thể đạt được thì công bố kèm giải thích rõ ràng cho lớp.</div>';
+  }
+
+  function renderAuditTable(audit) {
+    let html = '<thead><tr><th>Nhóm</th><th>Sĩ số</th><th>GPA TB</th><th>Giới tính</th><th>Kỹ năng cốt lõi còn thiếu</th></tr></thead><tbody>';
+    audit.teamStats.forEach((t, i) => {
+      const genderStr = Object.entries(t.genderCounts).map(([g, c]) => g + ': ' + c).join(', ');
+      const missing = t.missingSkills.length ? t.missingSkills.join(', ') : '—';
+      html += '<tr><td>Nhóm ' + (i + 1) + '</td><td>' + t.size + '</td><td>' + t.meanGpa.toFixed(2) + '</td><td>' + genderStr + '</td><td>' + missing + '</td></tr>';
+    });
+    html += '</tbody>';
+    return html;
+  }
+
+  function renderTeamsGrid(teams) {
+    return teams.map((team, i) => {
+      const items = team.map(s => '<li>' + s.name + (s.skills[0] ? ' <span class="muted">(' + s.skills[0] + ')</span>' : '') + '</li>').join('');
+      return '<div class="team-card"><h3>Nhóm ' + (i + 1) + ' (' + team.length + ' người)</h3><ul>' + items + '</ul></div>';
+    }).join('');
+  }
+
+  function buildCsv(result) {
+    let rows = [['Nhóm', 'Họ tên', 'Giới tính', 'Điểm (hệ 4)', 'Kỹ năng', 'Nguyện vọng ghép đôi', 'Ghi chú']];
+    result.teams.forEach((team, i) => {
+      team.forEach(s => {
+        rows.push([
+          'Nhóm ' + (i + 1), s.name, s.gender || 'Chưa xác định', s.score.toFixed(2),
+          s.skills.join('; '), s.buddyRaw || '', s.imputed ? 'Điểm được suy diễn (thiếu dữ liệu gốc)' : '',
+        ]);
+      });
+    });
+    return '﻿' + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  }
+
+  function buildPlainText(result) {
+    let lines = ['KẾT QUẢ CHIA NHÓM — seed: ' + result.seed, ''];
+    result.teams.forEach((team, i) => {
+      lines.push('Nhóm ' + (i + 1) + ':');
+      team.forEach(s => lines.push('- ' + s.name));
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+
+  function buildFairnessReport(result) {
+    const a = result.audit;
+    let lines = [
+      'BÁO CÁO CÔNG BẰNG — seed công khai: ' + result.seed,
+      'Chênh lệch GPA cao nhất/thấp nhất: ' + a.gpaGap.toFixed(3) + ' (ngưỡng < 0.3) — ' + (a.thresholds.gpaGapPass ? 'ĐẠT' : 'CẦN XEM LẠI'),
+      'Số nhóm có đúng 1 người giới tính thiểu số: ' + a.soloMinorityTeams + ' (ngưỡng = 0) — ' + (a.thresholds.soloMinorityPass ? 'ĐẠT' : 'CẦN XEM LẠI'),
+      'Số cặp (nhóm, kỹ năng) còn thiếu: ' + a.totalMissingSkillPairs + ' (ngưỡng = 0) — ' + (a.thresholds.skillsPass ? 'ĐẠT' : 'CẦN XEM LẠI'),
+      'Chênh lệch sĩ số giữa các nhóm: ' + a.sizeGap + ' (ngưỡng ≤ 1) — ' + (a.thresholds.sizeGapPass ? 'ĐẠT' : 'CẦN XEM LẠI'),
+      'Tỉ lệ nguyện vọng ghép đôi được đáp ứng: ' + (a.buddySatisfaction * 100).toFixed(0) + '%',
+      '', 'Chi tiết từng nhóm:',
+    ];
+    a.teamStats.forEach((t, i) => {
+      const genderStr = Object.entries(t.genderCounts).map(([g, c]) => g + ': ' + c).join(', ');
+      lines.push('Nhóm ' + (i + 1) + ' — sĩ số ' + t.size + ', GPA TB ' + t.meanGpa.toFixed(2) + ', ' + genderStr +
+        (t.missingSkills.length ? ', thiếu kỹ năng: ' + t.missingSkills.join(', ') : ''));
+    });
+    return lines.join('\n');
+  }
+
+  function buildAnnouncement(result) {
+    return 'THÔNG BÁO CHIA NHÓM ĐỒ ÁN CUỐI KỲ\n\n' +
+      'Cả lớp ơi, nhóm đồ án cuối kỳ đã được chia xong bằng công cụ tự động, cân bằng đồng thời về điểm học tập, giới tính và kỹ năng/chuyên môn.\n\n' +
+      'Seed công khai được dùng: ' + result.seed + '\n' +
+      'Bất kỳ ai chạy lại công cụ này với cùng seed sẽ ra kết quả giống hệt — nghĩa là không ai có thể can thiệp thủ công vào kết quả.\n\n' +
+      'Danh sách nhóm xem trong file đính kèm. Trong vòng 48 giờ kể từ khi thông báo này gửi đi, nếu có sai sót về dữ liệu (điểm/kỹ năng ghi sai) hoặc nguyện vọng ghép đôi bị bỏ sót, hãy phản hồi để được điều chỉnh. Sau 48 giờ danh sách sẽ được khoá và tiến hành bốc thăm đề tài.\n\n' +
+      'Cảm ơn cả lớp!';
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  function showOutput(text) {
+    const box = $('outputBox');
+    box.style.display = 'block';
+    box.textContent = text;
+  }
+
+  function run() {
+    const text = $('rosterInput').value;
+    const options = currentOptions();
+    const result = splitIntoTeams(text, options);
+    lastResult = result;
+
+    $('rosterCount').textContent = result.students.length + ' sinh viên đã đọc được (dấu phân tách: "' + result.delimiter + '"' +
+      (result.scaleFactor !== 1 ? ', đã quy đổi điểm từ hệ 10 sang hệ 4' : '') + ')';
+    $('warningsBox').innerHTML = result.warnings.length
+      ? result.warnings.map(w => '⚠ ' + w).join('<br/>')
+      : '';
+
+    $('resultsSection').style.display = 'block';
+    $('teamsSection').style.display = 'block';
+    $('metricCards').innerHTML = renderMetrics(result.audit);
+    $('verdictBox').innerHTML = renderVerdict(result.audit);
+    $('auditTable').innerHTML = renderAuditTable(result.audit);
+    $('teamsGrid').innerHTML = renderTeamsGrid(result.teams);
+    $('outputBox').style.display = 'none';
+  }
+
+  $('btnSample').addEventListener('click', () => { $('rosterInput').value = SAMPLE_DATA; });
+  $('btnUpload').addEventListener('click', () => $('fileInput').click());
+  $('fileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { $('rosterInput').value = reader.result; };
+    reader.readAsText(file, 'UTF-8');
+  });
+  $('btnRun').addEventListener('click', run);
+  $('btnExportCsv').addEventListener('click', () => {
+    if (!lastResult) return;
+    const csv = buildCsv(lastResult);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'ket-qua-chia-nhom.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  $('btnCopyText').addEventListener('click', () => {
+    if (!lastResult) return;
+    const t = buildPlainText(lastResult);
+    copyText(t); showOutput(t);
+  });
+  $('btnCopyReport').addEventListener('click', () => {
+    if (!lastResult) return;
+    const t = buildFairnessReport(lastResult);
+    copyText(t); showOutput(t);
+  });
+  $('btnCopyAnnounce').addEventListener('click', () => {
+    if (!lastResult) return;
+    const t = buildAnnouncement(lastResult);
+    copyText(t); showOutput(t);
+  });
+
+  // Tải dữ liệu mẫu tự động khi mở trang
+  $('rosterInput').value = SAMPLE_DATA;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+QUESTION 1 - RESEARCH REPORT ON PROJECT MANAGEMENT
+
+1. WHAT IS A PROJECT AND WHAT IS PROJECT MANAGEMENT
+
+A project is a temporary effort undertaken to create a unique product,
+service, or result. "Temporary" means it has a defined start and end;
+"unique" means the outcome differs from routine, repetitive operations.
+A project ends when its objectives are met, when it becomes clear the
+objectives cannot be met, or when the need for it disappears.
+
+Project management is the application of knowledge, skills, tools, and
+techniques to project activities in order to meet defined objectives
+within agreed constraints. A project manager plans the work, assembles
+and coordinates the team, tracks progress against a baseline, manages
+risk, and communicates status to stakeholders. Project management is
+not the same as product management: a project has an end date and a
+fixed set of deliverables, while a product is managed continuously for
+as long as it exists in the market.
+
+Every project operates inside constraints. The most common way to
+describe them is the scope-time-cost triangle, with quality placed at
+the centre because quality is affected by all three sides at once.
+
+
+2. THE SCOPE-TIME-COST TRIANGLE
+
+Scope is what the project must deliver. Time is the schedule available.
+Cost is the budget and the people-hours it can consume. These three are
+interdependent: changing one, without a matching change elsewhere, is
+absorbed by quality.
+
+  Corner squeezed   Typical consequence if the other two stay fixed
+  ----------------  ------------------------------------------------
+  Scope reduced      Fewer features ship; quality per feature can
+                      stay high because effort concentrates on less.
+  Scope increased     Either time or cost must increase too, or
+                      quality drops because the same effort now
+                      covers more ground.
+  Time reduced        Corners are cut under pressure: less testing,
+                      less review, more technical debt. Quality
+                      suffers first because it is the least visible
+                      corner to a sponsor watching the deadline.
+  Time increased      More room for testing and iteration, but the
+                      project costs more in people-hours and may
+                      miss its market window.
+  Cost reduced        Fewer or more junior people; scope or time
+                      must shrink to compensate, or output quality
+                      drops.
+  Cost increased      More people or better people, useful for
+                      time but not infinitely: adding people to a
+                      late project can slow it further because of
+                      coordination overhead.
+
+The lesson project managers draw from this triangle is that scope,
+time, and cost cannot all be fixed simultaneously without a quality
+cost. A sponsor who fixes all three has, in effect, already decided
+that quality is the variable that will absorb the difference.
+
+
+3. WATERFALL VERSUS AGILE
+
+Waterfall plans the entire project up front and executes it in
+sequential phases. Agile plans a small increment, builds it, gets
+feedback, and re-plans. The two differ on several practical dimensions.
+
+  Dimension        Waterfall                  Agile
+  ----------------  --------------------------  --------------------------
+  Requirements       Captured fully before      Captured incrementally,
+                      build starts; changes       refined each iteration
+                      go through formal change    as understanding grows
+                      control
+  Delivery            One release at the end     Working increments every
+                      of the project              1-4 weeks (a sprint)
+  Feedback timing      Mostly after delivery,     Every iteration; the
+                      near or at the end          customer sees working
+                                                    software early
+  Cost of change       High; a change late in     Lower; change is
+                      the sequence can force       expected and absorbed
+                      rework of prior phases       into the next iteration
+  When it fits          Fixed-scope, regulated,   Evolving requirements,
+                      low-uncertainty work         unclear or changing
+                      (e.g. building code           market needs, software
+                      compliance, hardware           products
+                      manufacturing)
+  Main risk            Late discovery that the    Scope can drift without
+                      product does not match       strong backlog
+                      what was actually needed     discipline; harder to
+                                                    give a fixed total
+                                                    price up front
+
+Neither approach is universally better. Waterfall suits work where the
+requirements are genuinely stable and the cost of late change is high
+(construction, regulated hardware). Agile suits work where the
+requirements are expected to change as the team and the customer learn
+more, which describes most software products, including FoodFast in
+Question 2.
+
+
+4. SCRUM
+
+Scrum is a framework for applying Agile ideas with a fixed structure of
+roles, artefacts, and events.
+
+Roles (3):
+  - Product Owner: owns the backlog, decides what gets built and in
+    what order, represents the customer's interests.
+  - Scrum Master: protects the process, removes blockers, coaches the
+    team; not a project manager who assigns tasks.
+  - Development Team: cross-functional, self-organising group that
+    builds the increment.
+
+Artefacts (3):
+  - Product Backlog: the ordered list of everything that might be
+    built, owned and prioritised by the Product Owner.
+  - Sprint Backlog: the subset of backlog items the team commits to
+    for the current sprint, plus the plan to deliver them.
+  - Increment: the sum of all completed backlog items, in a state that
+    meets the Definition of Done, potentially shippable.
+
+Events (4), with time-boxes for a 2-week sprint:
+  - Sprint Planning: up to 4 hours. The team selects backlog items and
+    plans how to deliver them.
+  - Daily Scrum: 15 minutes, every working day. The team synchronises
+    and surfaces blockers.
+  - Sprint Review: up to 2 hours. The team demonstrates the increment
+    to stakeholders and gathers feedback.
+  - Sprint Retrospective: up to 1.5 hours. The team inspects its own
+    process and agrees concrete improvements for the next sprint.
+
+(Time-boxes scale with sprint length; the figures above are the
+standard maximums for a 2-week sprint, roughly half the maximums used
+for a 4-week sprint.)
+
+
+5. KANBAN
+
+Kanban is a method for visualising and managing flow, built on three
+core principles:
+
+  1. Visualise the workflow: represent every stage of work as a column
+     on a board so bottlenecks are visible.
+  2. Limit work in progress (WIP): cap the number of items allowed in
+     each active column at one time.
+  3. Manage and measure flow: track how long items take to move across
+     the board (lead time and cycle time) and act on the data.
+
+The WIP limit is the principle most often ignored in practice, usually
+because it feels uncomfortable to stop starting new work. Without it,
+a Kanban board is just a to-do list split into columns: people keep
+pulling new items into "In Progress" while old items stall, and the
+board stops revealing anything about where work is actually stuck. The
+WIP limit is what forces a team to finish work before starting more,
+which is the entire point of a flow-based method.
+
+
+6. REQUIREMENTS ENGINEERING
+
+A requirement is a statement of what a system must do or a quality it
+must have. Requirements split into two kinds:
+
+  - Functional requirements describe behaviour: what the system does
+    in response to inputs. Example: "the system shall let a customer
+    cancel an order within 5 minutes of placing it."
+  - Non-functional requirements describe qualities of the system:
+    performance, security, availability, usability, scalability.
+    Example: "the search API shall respond with p95 latency under
+    500 ms under 200 concurrent users."
+
+A good requirement is:
+  - Unambiguous: only one reasonable interpretation.
+  - Verifiable: someone can test whether it was met.
+  - Necessary: traceable to a real business or user need.
+  - Feasible: achievable within the project's constraints.
+  - Prioritised: not everything can be "must have."
+  - Consistent: does not contradict another requirement.
+
+The most common failure is writing a requirement that sounds precise
+but cannot be tested. "The app must be fast" is not a requirement,
+because nobody can say, after building it, whether it passed or
+failed. "The search API responds with p95 under 500 ms" is a
+requirement, because it is a number a test can check against.
+
+
+7. USER STORIES
+
+A user story is a short, informal description of a feature written
+from the perspective of the person who wants it, using the template:
+
+  As a [role], I want to [action] so that [benefit].
+
+Example: "As a customer, I want to save my delivery address so that I
+do not retype it on every order."
+
+A well-formed story satisfies the INVEST criteria:
+  - Independent: can be built and delivered without depending on
+    another unfinished story.
+  - Negotiable: a starting point for a conversation, not a fixed
+    contract.
+  - Valuable: delivers value to a user or the business.
+  - Estimable: the team can size it with reasonable confidence.
+  - Small: fits inside a single sprint.
+  - Testable: has clear acceptance criteria.
+

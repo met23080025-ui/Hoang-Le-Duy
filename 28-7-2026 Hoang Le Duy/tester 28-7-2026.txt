@@ -1,0 +1,165 @@
+
+BÁO CÁO: TÌM HIỂU VỀ TESTER
+Ngày: 28-7-2026
+Họ tên: Hoang Le Duy - 23080025
+
+
+1. TESTER LÀ GÌ?
+Tester (Kiểm thử viên phần mềm) là người chịu trách nhiệm kiểm tra chất lượng
+của phần mềm trước khi sản phẩm được phát hành đến tay người dùng. Mục tiêu
+chính của Tester là phát hiện lỗi (bug), đảm bảo phần mềm hoạt động đúng theo
+yêu cầu đặc tả, và xác nhận rằng sản phẩm đáp ứng được kỳ vọng của khách hàng.
+
+Tester không chỉ đơn thuần là "người tìm lỗi" — họ còn đóng vai trò bảo vệ
+người dùng cuối, giảm thiểu rủi ro cho doanh nghiệp, và góp phần nâng cao
+chất lượng toàn bộ quy trình phát triển phần mềm.
+
+
+2. VAI TRÒ VÀ CÔNG VIỆC HẰNG NGÀY CỦA TESTER
+Vai trò chính:
+  - Đảm bảo chất lượng phần mềm (Quality Assurance / Quality Control)
+  - Phát hiện và ghi nhận lỗi trước khi phát hành
+  - Xác minh rằng các tính năng hoạt động đúng theo yêu cầu
+  - Phối hợp với developer để tái hiện và xác nhận lỗi đã được sửa
+
+Công việc hằng ngày:
+  - Đọc và phân tích tài liệu yêu cầu 
+  - Viết test plan và test case cho các tính năng mới
+  - Thực thi kiểm thử 
+  - Báo cáo bug lên hệ thống quản lý 
+  - Kiểm tra lại các bug đã được sửa 
+  - Tham gia họp nhóm 
+  - Cập nhật trạng thái kiểm thử và báo cáo tiến độ
+
+
+3. QUY TRÌNH KIỂM THỬ PHẦN MỀM
+
+  3.1. Viết Test Plan (Kế hoạch kiểm thử)
+       - Xác định phạm vi kiểm thử (scope): kiểm thử cái gì, không kiểm thử cái gì
+       - Xác định mục tiêu kiểm thử
+       - Lên lịch kiểm thử và phân công công việc
+       - Xác định môi trường kiểm thử (trình duyệt, thiết bị, OS...)
+       - Xác định tiêu chí chấp nhận (entry/exit criteria)
+
+  3.2. Viết Test Case (Ca kiểm thử)
+       - Mỗi test case gồm: ID, tiêu đề, điều kiện tiên quyết, các bước thực hiện,
+         dữ liệu đầu vào, kết quả mong đợi, kết quả thực tế, trạng thái (Pass/Fail)
+       - Test case phải rõ ràng, có thể tái thực hiện, và bao phủ đủ các tình huống
+
+  3.3. Thực thi kiểm thử (Test Execution)
+       - Chạy các test case theo kế hoạch
+       - Ghi lại kết quả thực tế so với kết quả mong đợi
+       - Đánh dấu Pass / Fail / Blocked cho từng test case
+       - Chụp màn hình / ghi log khi phát hiện lỗi
+
+  3.4. Báo cáo lỗi (Bug Reporting)
+       - Một bug report tốt cần có:
+           + Tiêu đề ngắn gọn, mô tả đúng vấn đề
+           + Môi trường xảy ra lỗi (trình duyệt, OS, phiên bản...)
+           + Các bước tái hiện lỗi (steps to reproduce)
+           + Kết quả thực tế (actual result)
+           + Kết quả mong đợi (expected result)
+           + Mức độ nghiêm trọng (severity): Critical / Major / Minor / Trivial
+           + Ưu tiên xử lý (priority): High / Medium / Low
+           + Ảnh chụp màn hình / video minh chứng
+
+
+4. CÁC LOẠI KIỂM THỬ PHỔ BIẾN
+
+  - Manual Testing (Kiểm thử thủ công):
+    Tester tự tay thực hiện các bước kiểm thử mà không dùng công cụ tự động.
+    Phù hợp với giai đoạn đầu, kiểm thử giao diện, trải nghiệm người dùng.
+
+  - Automation Testing (Kiểm thử tự động):
+    Dùng script và công cụ (Selenium, Cypress, Playwright...) để chạy test case
+    tự động. Phù hợp với regression testing và các test case lặp đi lặp lại.
+
+  - Black Box Testing:
+    Kiểm thử dựa trên đầu vào và đầu ra mà không biết cấu trúc bên trong của
+    phần mềm. Tester chỉ quan sát hành vi bên ngoài của hệ thống.
+
+  - White Box Testing:
+    Tester có kiến thức về code và cấu trúc nội bộ của hệ thống. Thường do
+    developer hoặc tester kỹ thuật cao thực hiện.
+
+  - Functional Testing (Kiểm thử chức năng):
+    Kiểm tra xem các tính năng của phần mềm có hoạt động đúng theo yêu cầu
+    không (đăng nhập, tìm kiếm, đặt hàng, thanh toán...).
+
+  - UI Testing (Kiểm thử giao diện):
+    Kiểm tra giao diện người dùng: bố cục, màu sắc, font chữ, nút bấm, responsive
+    trên các kích thước màn hình khác nhau.
+
+  - Regression Testing:
+    Sau khi sửa bug hoặc thêm tính năng mới, kiểm tra lại các chức năng cũ để
+    đảm bảo không bị ảnh hưởng.
+
+  - Smoke Testing:
+    Kiểm thử nhanh các chức năng cơ bản nhất để xác nhận bản build có ổn định
+    đủ để tiếp tục kiểm thử sâu hơn không.
+
+  - Performance Testing:
+    Kiểm tra tốc độ, khả năng chịu tải, độ ổn định của hệ thống dưới nhiều
+    điều kiện khác nhau.
+
+  - Security Testing:
+    Kiểm tra các lỗ hổng bảo mật: SQL Injection, XSS, quyền truy cập trái phép...
+
+  - Compatibility Testing:
+    Kiểm tra phần mềm hoạt động đúng trên nhiều trình duyệt, hệ điều hành,
+    thiết bị khác nhau.
+
+  - Usability Testing:
+    Đánh giá mức độ dễ sử dụng và trải nghiệm người dùng của phần mềm.
+
+
+5. KỸ NĂNG CẦN CÓ ĐỂ LÀM TESTER
+
+  Kỹ năng chuyên môn:
+  - Hiểu quy trình phát triển phần mềm (SDLC, Agile, Scrum)
+  - Biết viết test plan, test case, bug report
+  - Có tư duy phân tích, khả năng xác định và tái hiện lỗi
+  - Hiểu cơ bản về HTML, CSS, SQL để kiểm thử hiệu quả hơn
+  - Biết sử dụng ít nhất một công cụ quản lý bug (Jira, Redmine...)
+  - Kiến thức cơ bản về API testing (Postman)
+
+  Kỹ năng mềm:
+  - Tư duy phản biện và sự tỉ mỉ, cẩn thận
+  - Kỹ năng giao tiếp tốt (làm việc cùng developer, BA, PM)
+  - Khả năng đặt câu hỏi đúng trọng tâm
+  - Kiên nhẫn và chú ý đến chi tiết
+  - Kỹ năng viết tài liệu rõ ràng, mạch lạc
+
+
+6. CÔNG CỤ PHỔ BIẾN MÀ TESTER SỬ DỤNG
+
+  Quản lý test case & bug:
+  - Jira — quản lý dự án, theo dõi bug
+  - TestRail — quản lý test case và kết quả kiểm thử
+  - Redmine — quản lý bug (phổ biến ở dự án dùng mã nguồn mở)
+  - Mantis BugTracker
+
+  Automation Testing:
+  - Selenium WebDriver — automation test trên trình duyệt
+  - Cypress — modern automation testing cho web
+  - Playwright — automation đa trình duyệt của Microsoft
+  - Appium — automation testing cho mobile (Android/iOS)
+
+  API Testing:
+  - Postman — gửi request, kiểm tra response API
+  - SoapUI — kiểm thử API SOAP và REST
+
+  Performance Testing:
+  - Apache JMeter — kiểm thử hiệu năng và tải
+  - Gatling
+
+  Trình duyệt & DevTools:
+  - Chrome DevTools — kiểm tra network, console, element
+  - BrowserStack — test cross-browser/cross-device
+
+  Khác:
+  - Git / GitHub — quản lý phiên bản, lưu tài liệu kiểm thử
+  - VS Code / Notepad++ — soạn thảo tài liệu và script
+  - Snagit / Lightshot — chụp màn hình minh chứng lỗi
+
+

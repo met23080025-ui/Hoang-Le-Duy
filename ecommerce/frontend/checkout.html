@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - ShopEase</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="logo">🛍️ ShopEase</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/products.html">Products</a></li>
+    <li><a href="/cart.html" class="cart-icon">🛒 <span class="cart-badge" id="cart-count">0</span></a></li>
+    <ul id="nav-auth"></ul>
+  </ul>
+</nav>
+
+<div class="container">
+  <h1 style="margin-bottom:1.5rem;">Checkout</h1>
+  <div style="display:grid; grid-template-columns:1fr 350px; gap:1.5rem;">
+    <div class="card" style="padding:1.5rem;">
+      <h3 style="margin-bottom:1.5rem;">Shipping Information</h3>
+      <form id="checkout-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="fullname" required placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" id="phone" required placeholder="Your phone number">
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <textarea id="address" required placeholder="Street address" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="city" required placeholder="City">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:1rem;">
+          Place Order
+        </button>
+      </form>
+    </div>
+
+    <div class="cart-summary">
+      <h3 style="margin-bottom:1rem;">Your Order</h3>
+      <div id="order-items"></div>
+      <hr style="margin:1rem 0; border-color:#e2e8f0;">
+      <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem;">
+        <span>Total:</span>
+        <span id="order-total"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer><p>© 2024 ShopEase</p></footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  updateNavbar();
+
+  if (!isLoggedIn()) {
+    showToast('Please login to checkout', 'error');
+    setTimeout(() => window.location.href = '/login.html', 1000);
+  }
+
+  const cart = getCart();
+  const total = getCartTotal();
+
+  document.getElementById('order-items').innerHTML = cart.map(item => `
+    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.9rem;">
+      <span>${item.name} x${item.quantity}</span>
+      <span>$${(item.price * item.quantity).toFixed(2)}</span>
+    </div>
+  `).join('');
+  document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
+
+  document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const address = `${document.getElementById('fullname').value}, ${document.getElementById('phone').value}, ${document.getElementById('address').value}, ${document.getElementById('city').value}`;
+
+    const res = await api.post('/orders', {
+      items: cart,
+      address,
+      total
+    });
+
+    if (res.order_id) {
+      localStorage.removeItem('cart');
+      showToast('Order placed successfully!');
+      setTimeout(() => window.location.href = '/', 1500);
+    } else {
+      showToast(res.message || 'Order failed', 'error');
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+QUESTION 4 - STRENGTHS AND WEAKNESSES OF THE MED-AI PROJECT BOARD
+
+
+SECTION A - STRENGTHS
+
+  - Dashboard, Kanban, and Gantt combined in one tool. The site's own
+    meta description confirms this scope ("Dashboard, Kanban & Gantt
+    Chart"), and the navigation shell lists Overview, a task/Kanban
+    view, and a Gantt Timeline view together. Many free PM tools
+    (Trello, plain GitHub Projects) offer only a Kanban board and
+    nothing else; having all three views in one place is a real
+    design advantage for a small team that wants one place to look.
+  - Almost no barrier to use. It is a single public URL - no sign-up,
+    no install, nothing to configure before viewing. That was
+    confirmed directly: navigating straight to the project routes
+    (overview, board, gantt, members, activity) returned content
+    without hitting a login wall. Sharing the whole board with a
+    team, or with a lecturer, is one link.
+  - Unlimited customisation because it is built in-house. Unlike
+    Jira, Trello, or GitHub Projects, this tool is not constrained by
+    a vendor's data model - the team that built it can add any field,
+    any view, or any workflow rule they want, with no plan tier
+    gating a feature behind a paywall.
+  - Zero running cost at small scale. It is hosted on Vercel's
+    platform and, at a single small project's traffic level, likely
+    costs nothing to run (Vercel's own free tier covers small Next.js
+    deployments) - a fair strength for a student or internal tool,
+    though the exact hosting bill was not checked in this session.
+
+
+SECTION B - WEAKNESSES
+
+  Weakness                    Why it matters                Severity
+  ---------------------------  -----------------------------  --------
+  The URL is publicly           The tool describes itself as   High
+  reachable with no access      internal, but project data
+  control at the server         (a real staff name, a role,
+  layer, while describing       navigation into members and
+  itself as internal.           activity-log routes) was
+  Confirmed: five different     reachable with zero
+  routes (overview, board,      authentication in this
+  gantt, members, activity)     session. If this reflects
+  all returned content          the production deployment,
+  directly, with no login       any member or project
+  redirect and a named user     detail behind those routes
+  shown by default.             is effectively public.
+  The page is rendered           This hurts accessibility        Medium
+  entirely on the client for     (screen readers and other
+  its actual board/Gantt         assistive tools that rely
+  data. Confirmed at the         on server-rendered content
+  HTTP level: fetching the       see less), hurts the
+  board and Gantt routes         ability to deep-link to one
+  directly (no JavaScript        specific card or chart
+  executed) returned the         state, and means the tool
+  navigation shell and a         is unusable if a script on
+  loading placeholder, but       the page fails to load for
+  no card titles, column         any reason. Note: this was
+  data, or Gantt bars - that     confirmed via a raw HTTP
+  data is fetched only after     fetch, which is equivalent
+  the page's JavaScript runs.    to a no-JavaScript view but
+                                is not the same as running
+                                the literal "disable
+                                JavaScript" toggle in
+                                DevTools (see Q3, Step 3,
+                                still marked not yet
+                                verified for a full
+                                confirmation).
+  The published feature set      Without sprints, a               Medium
+  is missing the core Scrum      prioritised backlog, and
+  components: no "Backlog" or    velocity tracking, the tool
+  "Sprint" item appears in       can show what state a task
+  the site's own navigation      is in today, but it cannot
+  menu (confirmed list:          support the planning and
+  Overview, Tasks/Kanban,        process-improvement work
+  Gantt Timeline, Projects,      that Scrum is built around
+  Meetings, Members, Activity    - there is nowhere to run a
+  Log, Settings). This does      retrospective or measure
+  not rule out a feature         velocity over time.
+  existing outside the main
+  navigation, but none was
+  visible where a user would
+  expect to find it.
+
+
+SECTION C - WEAKNESSES THAT STILL NEED VERIFICATION
+
+These are hypotheses, not findings. Each is a typical gap in a
+demo-grade, in-house-built board, and each needs the stated check
+before it can be reported as confirmed.
+
+  - Data may be hard-coded with no real database, so changes could be
+    lost on reload. How to check: run Q3's Step 2 (drag a card, press
+    F5, see if it reverts).
+  - No login and no permissions, so anyone might be able to edit, not
+    just view. This session confirmed viewing needs no login; it did
+    not confirm whether editing is also open. How to check: attempt
+    to edit a card without any sign-in step and see if the change is
+    accepted.
+  - No change history and no comments on cards. How to check: open a
+    card (Q3 Step 5) and look for a history or comment section.
+  - No notifications when a card changes state. How to check: change
+    a card's state in one browser session and see whether a second,
+    simultaneous session is notified or has to refresh manually.
+  - No Git integration, so a card may not close automatically when
+    its pull request merges, and the board could lag behind the real
+    code. This is where GitHub Projects (Section E) is structurally
+    ahead, since that link is native there. How to check: look for
+    any commit or pull-request reference on a card, or a webhook
+    settings page under "Cai dat" (Settings).
+  - The Gantt chart may have no dependency links and no critical
+    path. How to check: Q3 Step 6, since the Gantt route's underlying
+    data could not be inspected without running its client-side
+    script.
+  - No WIP limits, so the board could degrade into a long to-do list
+    and lose its ability to reveal bottlenecks. How to check: look
+    for a numeric cap shown on any column header.
+  - No acceptance-criteria field on cards. This is the most serious
+    possible gap from a requirements-engineering standpoint if
+    confirmed, because without acceptance criteria nobody can say
+    when a story is actually finished. How to check: Q3 Step 5, open
+    a card and read its full field list.
+  - No CSV or PDF export. How to check: look for an export option in
+    Settings or on the board/Gantt toolbar.
+  - Layout may break on small screens. How to check: Q3 Step 4,
+    resize to 375 px and observe.
+
+
+SECTION D - IMPROVEMENT PROPOSALS (ORDERED BY PRIORITY)
+
+  Priority  Proposal                          Solves (from B/C)
+  --------  --------------------------------  --------------------------
+  High       Put the deployment behind a        The public-reachability,
+            login, even a simple shared         no-access-control
+            password or an allowlist of         weakness (Section B).
+            university email domains.
+  High       Add a card-level "Acceptance        The missing
+            criteria" field, written as          acceptance-criteria
+            Given-When-Then, before adding        gap (Section C).
+            any other new feature.
+  Medium     Add a lightweight backlog and       The missing Scrum
+            sprint concept: a "Sprint"            components weakness
+            field on each card and a              (Section B).
+            simple sprint filter/view.
+  Medium     Add a numeric WIP-limit setting     The possible missing
+            per column, shown on the              WIP-limit gap
+            column header.                       (Section C).
+  Medium     Server-render at least the           The client-only
+            board and Gantt data (or add          rendering weakness
+            a static fallback), so the            (Section B).
+            page is not empty before its
+            JavaScript runs.
+  Low        Add CSV export for the board         The possible missing
+            and Gantt data.                      export gap (Section
+                                                  C).
+  Low        Add responsive breakpoints for       The possible mobile
+            the Kanban and Gantt views            layout gap (Section
+            below 400 px width.                   C).
+
+
+SECTION E - MED-AI PROJECT BOARD VS GITHUB PROJECTS
+
+  Dimension              Med-AI Project Board        GitHub Projects
+  ----------------------  ---------------------------  ---------------------
+  Barrier to start         Lowest observed: one URL,    Needs a GitHub
+                          no sign-up, confirmed          account and a
+                          reachable with no login        repository; free,
+                          this session.                  but not a bare
+                                                          link-and-go.
+  Data persistence         Unknown, not yet verified     Confirmed: backed
+                          (Section C).                   by GitHub's own
+                                                          storage, changes
+                                                          persist.
+  Link to source code       No evidence of Git           Native: a pull
+                          integration found; not         request can close
+                          yet fully verified              an issue and
+                          (Section C).                    move its card
+                                                          automatically.
+  Permissions               No login observed for        Inherits GitHub's
+                          five routes tested this         repository
+                          session; role-based             permission model
+                          differences not yet             (public/private,
+                          verified.                       collaborator
+                                                          roles).
+  Gantt or timeline         Has a dedicated Gantt         No native Gantt;
+                          view; whether it shows          would need a
+                          dependencies is not yet         third-party
+                          verified (Section C).           extension or
+                                                          export.
+  Field customisation       Presumed unlimited, since     Limited to
+                          it is built in-house;           custom field
+                          not something a viewer          types GitHub
+                          can change without               supports
+                          developer access.                (Text, Number,
+                                                          Date, Single-
+                                                          select, Iteration).
+  Best suited for           A quick, view-once           A team that is
+                          dashboard shared by             actually building
+                          link, or a design               software and
+                          reference/demo for a            wants the board
+                          course assignment.               to stay honest
+                                                          against the real
+                                                          codebase.
+
+In one sentence each: Med-AI Project Board is best as a fast, no-setup
+way to present a combined Dashboard/Kanban/Gantt view to people who
+just need to look at it; GitHub Projects is best for a team that is
+actually writing code and wants its board to track the real state of
+that code, at zero cost, even though it must be assembled by hand
+from generic building blocks.

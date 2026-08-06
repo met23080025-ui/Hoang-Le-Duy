@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - ShopEase</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="logo">🛍️ ShopEase</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/products.html">Products</a></li>
+    <li><a href="/cart.html" class="cart-icon">🛒 <span class="cart-badge" id="cart-count">0</span></a></li>
+    <ul id="nav-auth"></ul>
+  </ul>
+</nav>
+
+<div class="container">
+  <h1 style="margin-bottom:1.5rem;">Shopping Cart</h1>
+  <div style="display:grid; grid-template-columns:1fr 300px; gap:1.5rem;">
+    <div id="cart-items"></div>
+    <div class="cart-summary" id="cart-summary"></div>
+  </div>
+</div>
+
+<footer><p>© 2024 ShopEase</p></footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  updateNavbar();
+
+  function renderCart() {
+    const cart = getCart();
+    const itemsContainer = document.getElementById('cart-items');
+    const summaryContainer = document.getElementById('cart-summary');
+
+    if (cart.length === 0) {
+      itemsContainer.innerHTML = `
+        <div class="empty-state card" style="padding:3rem;">
+          <h3>Your cart is empty</h3>
+          <p style="margin:1rem 0;">Start shopping to add items!</p>
+          <a href="/products.html" class="btn btn-primary">Shop Now</a>
+        </div>`;
+      summaryContainer.innerHTML = '';
+      return;
+    }
+
+    itemsContainer.innerHTML = `
+      <div class="card">
+        <table class="cart-table">
+          <thead>
+            <tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${cart.map(item => `
+              <tr>
+                <td>
+                  <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <img src="${item.image}" width="50" height="50" style="object-fit:cover; border-radius:4px;">
+                    ${item.name}
+                  </div>
+                </td>
+                <td>$${parseFloat(item.price).toFixed(2)}</td>
+                <td>
+                  <input type="number" value="${item.quantity}" min="1" 
+                    style="width:60px; padding:0.3rem; border:1px solid #e2e8f0; border-radius:4px;"
+                    onchange="updateQuantity(${item.id}, this.value); renderCart()">
+                </td>
+                <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                <td>
+                  <button class="btn btn-danger" onclick="removeFromCart(${item.id}); renderCart()">✕</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    summaryContainer.innerHTML = `
+      <h3 style="margin-bottom:1rem;">Order Summary</h3>
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+        <span>Subtotal:</span><span>$${getCartTotal().toFixed(2)}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+        <span>Shipping:</span><span style="color:#22c55e;">Free</span>
+      </div>
+      <hr style="margin:1rem 0; border-color:#e2e8f0;">
+      <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem; margin-bottom:1.5rem;">
+        <span>Total:</span><span>$${getCartTotal().toFixed(2)}</span>
+      </div>
+      <a href="/checkout.html" class="btn btn-primary btn-block" style="text-align:center; display:block;">
+        Proceed to Checkout
+      </a>`;
+  }
+
+  renderCart();
+</script>
+</body>
+</html>

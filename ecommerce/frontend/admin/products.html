@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Products - ShopEase</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="logo">🛍️ ShopEase</div>
+    <ul>
+      <li><a href="/admin/dashboard.html">📊 Dashboard</a></li>
+      <li><a href="/admin/products.html" class="active">📦 Products</a></li>
+      <li><a href="/admin/orders.html">🧾 Orders</a></li>
+      <li><a href="/">🏠 Store</a></li>
+      <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+    </ul>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Manage Products</h1>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>ID</th><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Category</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="products-table"></tbody>
+    </table>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" style="display:none;">
+  <div class="modal">
+    <h3 id="modal-title">Add Product</h3>
+    <form id="product-form">
+      <input type="hidden" id="product-id">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" id="product-name" required>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="product-desc" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Price ($)</label>
+        <input type="number" id="product-price" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" id="product-stock" required>
+      </div>
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="text" id="product-image" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="product-category"></select>
+      </div>
+      <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:1rem;">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/products.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  if (!isAdmin()) window.location.href = '/login.html';
+
+  loadCategories('product-category');
+
+  async function loadProducts() {
+    const products = await api.get('/products');
+    document.getElementById('products-table').innerHTML = products.map(p => `
+      <tr>
+        <td>${p.id}</td>
+        <td><img src="${p.image}" width="50" height="50" style="object-fit:cover; border-radius:4px;"></td>
+        <td>${p.name}</td>
+        <td>$${parseFloat(p.price).toFixed(2)}</td>
+        <td>${p.stock}</td>
+        <td>${p.category_name || '-'}</td>
+        <td>
+          <button class="btn btn-outline" onclick="editProduct(${p.id}, '${p.name}', '${p.description}', ${p.price}, ${p.stock}, '${p.image}', ${p.category_id})">Edit</button>
+          <button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openModal() {
+    document.getElementById('modal').style.display = 'flex';
+    document.getElementById('modal-title').textContent = 'Add Product';
+    document.getElementById('product-form').reset();
+    document.getElementById('product-id').value = '';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+  }
+
+  function editProduct(id, name, desc, price, stock, image, catId) {
+    document.getElementById('modal').style.display = 'flex';
+    document.getElementById('modal-title').textContent = 'Edit Product';
+    document.getElementById('product-id').value = id;
+    document.getElementById('product-name').value = name;
+    document.getElementById('product-desc').value = desc || '';
+    document.getElementById('product-price').value = price;
+    document.getElementById('product-stock').value = stock;
+    document.getElementById('product-image').value = image || '';
+    document.getElementById('product-category').value = catId;
+  }
+
+  async function deleteProduct(id) {
+    if (!confirm('Delete this product?')) return;
+    await api.delete(`/products/${id}`);
+    showToast('Product deleted');
+    loadProducts();
+  }
+
+  document.getElementById('product-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('product-id').value;
+    const data = {
+      name: document.getElementById('product-name').value,
+      description: document.getElementById('product-desc').value,
+      price: document.getElementById('product-price').value,
+      stock: document.getElementById('product-stock').value,
+      image: document.getElementById('product-image').value,
+      category_id: document.getElementById('product-category').value
+    };
+
+    if (id) {
+      await api.put(`/products/${id}`, data);
+      showToast('Product updated');
+    } else {
+      await api.post('/products', data);
+      showToast('Product added');
+    }
+    closeModal();
+    loadProducts();
+  });
+
+  loadProducts();
+</script>
+</body>
+</html>

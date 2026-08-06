@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - ShopEase</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="logo">🛍️ ShopEase</div>
+    <ul>
+      <li><a href="/admin/dashboard.html" class="active">📊 Dashboard</a></li>
+      <li><a href="/admin/products.html">📦 Products</a></li>
+      <li><a href="/admin/orders.html">🧾 Orders</a></li>
+      <li><a href="/" >🏠 Store</a></li>
+      <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+    </ul>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Dashboard</h1>
+      <span id="admin-name"></span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="total-products">-</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-orders">-</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-revenue">-</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="pending-orders">-</div>
+        <div class="stat-label">Pending Orders</div>
+      </div>
+    </div>
+
+    <h2 style="margin-bottom:1rem;">Recent Orders</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th>ID</th><th>Customer</th><th>Products</th><th>Total</th><th>Status</th><th>Date</th></tr>
+      </thead>
+      <tbody id="recent-orders"></tbody>
+    </table>
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  if (!isAdmin()) window.location.href = '/login.html';
+  const user = getUser();
+  document.getElementById('admin-name').textContent = `Welcome, ${user?.name}`;
+
+  async function loadDashboard() {
+    const [products, orders] = await Promise.all([
+      api.get('/products'),
+      api.get('/orders/all')
+    ]);
+
+    document.getElementById('total-products').textContent = products.length;
+    document.getElementById('total-orders').textContent = orders.length;
+    document.getElementById('total-revenue').textContent =
+      '$' + orders.reduce((s, o) => s + parseFloat(o.total), 0).toFixed(2);
+    document.getElementById('pending-orders').textContent =
+      orders.filter(o => o.status === 'pending').length;
+
+    document.getElementById('recent-orders').innerHTML = orders.slice(0, 10).map(o => `
+      <tr>
+        <td>#${o.id}</td>
+        <td>${o.user_name}<br><small style="color:#64748b">${o.email}</small></td>
+        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.products || '-'}</td>
+        <td>$${parseFloat(o.total).toFixed(2)}</td>
+        <td><span class="badge badge-${o.status}">${o.status}</span></td>
+        <td>${new Date(o.created_at).toLocaleDateString()}</td>
+      </tr>
+    `).join('');
+  }
+
+  loadDashboard();
+</script>
+</body>
+</html>

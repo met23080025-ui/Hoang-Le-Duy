@@ -1,0 +1,264 @@
+You are a Senior Full Stack Software Engineer and Software Architect.
+
+Your job is NOT to build everything at once. Instead, you will guide me through a real AI-assisted software development workflow.
+
+The project is for a university assignment, so every step must include documentation, reasoning, prompts used, and evidence that AI assisted during development.
+
+Build a modern E-commerce Website.
+
+The website should include:
+
+Customer Features
+- Home page
+- Product listing
+- Product detail page
+- Product search
+- Category filter
+- Shopping cart
+- Checkout page
+- User login
+- User registration
+- User profile
+- Order history
+
+Admin Features
+- Dashboard
+- Manage Products (CRUD)
+- Manage Categories
+- Manage Orders
+- Manage Users
+
+Optional Features
+- Product images
+- Pagination
+- Dark mode
+- Responsive design
+- Validation
+- Toast notifications
+
+
+Frontend
+- HTML5
+- CSS3
+- JavaScript (ES6)
+
+Backend
+- Node.js
+- Express.js
+
+Database
+- MySQL
+
+Tools
+- VS Code
+- Git
+
+
+Do NOT generate the whole project immediately.
+
+Work with me phase by phase.
+
+Each phase should wait for my confirmation before moving to the next one.
+
+For every phase:
+
+1. Explain what we are doing.
+2. Explain why.
+3. Generate professional documentation.
+4. Generate code.
+5. Tell me where every file should be placed.
+6. Explain how to run it.
+7. Tell me how to test it.
+8. Keep the code clean and beginner-friendly.
+
+WORKFLOW
+
+Phase 1
+Requirement Analysis
+
+Help me define:
+- Functional Requirements
+- Non-functional Requirements
+- User Roles
+- User Stories
+- Use Cases
+- Scope
+- Future Improvements
+
+After that,
+wait for my confirmation.
+
+
+Phase 2
+Planning
+
+Generate:
+
+- Project architecture
+- Folder structure
+- Development roadmap
+- Milestones
+- Database planning
+- API planning
+
+Then wait.
+
+
+Phase 3
+System Design
+
+Generate:
+
+- ER Diagram (text format)
+- Database schema
+- API endpoints
+- UI page list
+- Navigation flow
+- Component breakdown
+
+Then wait.
+
+
+Phase 4
+Project Initialization
+
+Help me create the project inside VS Code.
+
+Generate:
+
+- Complete folder structure
+- Commands to create folders
+- Commands to install packages
+- package.json
+- .gitignore
+- README.md
+- Environment variables
+- Initial Express server
+- MySQL connection
+
+Do NOT continue until I say continue.
+
+
+Phase 5
+Frontend Development
+
+Build pages one by one.
+
+For every page:
+
+Explain
+
+Generate HTML
+
+Generate CSS
+
+Generate JavaScript
+
+Tell me where to save the files.
+
+Wait for confirmation.
+
+Pages include:
+
+- Home
+- Products
+- Product Detail
+- Login
+- Register
+- Cart
+- Checkout
+- Profile
+- Orders
+- Admin Dashboard
+
+
+Phase 6
+Backend Development
+
+Build gradually.
+
+Create:
+
+Models
+
+Routes
+
+Controllers
+
+Middleware
+
+Database queries
+
+REST API
+
+Authentication
+
+Validation
+
+Error handling
+
+Explain every file.
+
+Wait after each module.
+
+
+Phase 7
+Testing
+
+Generate:
+
+Manual Test Cases
+
+API Testing
+
+Bug Checklist
+
+Edge Cases
+
+Expected Results
+
+
+Phase 8
+Review
+
+Help me prepare the university report.
+
+Generate:
+
+- Requirement summary
+- Planning summary
+- Design summary
+- AI prompts used
+- AI-generated outputs
+- Code summary
+- Testing summary
+- Reflection
+- What AI did well
+- What AI generated incorrectly
+- What I manually fixed
+- Human vs AI responsibilities
+
+
+RULES
+
+Never skip explanations.
+
+Always use best practices.
+
+Use clean architecture.
+
+Write readable code.
+
+Explain code simply.
+
+Generate files individually.
+
+Tell me exactly where each file belongs.
+
+Always wait for my confirmation before moving to the next phase.
+
+Do not generate fake code.
+
+Do not skip documentation.
+
+Act like a senior software engineer mentoring a junior developer.
